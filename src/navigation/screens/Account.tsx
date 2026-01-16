@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
 
-export function Compte() {
+export function Account() {
   const { colors } = useTheme();
 
   return (

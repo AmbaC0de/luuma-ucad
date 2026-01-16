@@ -13,8 +13,9 @@ import { Settings } from "./screens/Settings";
 import { Updates } from "./screens/Updates";
 import { NotFound } from "./screens/NotFound";
 import { Documents } from "./screens/Documents";
-import { Boutique } from "./screens/Boutique";
-import { Compte } from "./screens/Compte";
+import { Shop } from "./screens/Shop";
+import { Account } from "./screens/Account";
+import { NewsDetail } from "./screens/NewsDetail";
 
 const HomeTabs = createBottomTabNavigator({
   screenOptions: ({ theme, navigation }) => ({
@@ -74,8 +75,8 @@ const HomeTabs = createBottomTabNavigator({
         ),
       },
     },
-    Boutique: {
-      screen: Boutique,
+    Shop: {
+      screen: Shop,
       options: {
         title: "Boutique",
         tabBarIcon: ({ color, size }) => (
@@ -109,8 +110,8 @@ const RootStack = createNativeStackNavigator({
         title: "Notifications",
       },
     },
-    Compte: {
-      screen: Compte,
+    Account: {
+      screen: Account,
       options: {
         title: "Compte",
       },
@@ -145,6 +146,13 @@ const RootStack = createNativeStackNavigator({
       },
       linking: {
         path: "*",
+      },
+    },
+    NewsDetail: {
+      screen: NewsDetail,
+      options: {
+        title: "Détails",
+        headerBackTitle: "Retour",
       },
     },
   },

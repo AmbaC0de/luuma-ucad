@@ -1,4 +1,4 @@
-import { useTheme } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import React from "react";
 import {
   FlatList,
@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { RectButton } from "react-native-gesture-handler";
+import { getCategoryColor } from "@src/utils/overall";
 
 // Types
 interface NewsItem {
@@ -77,6 +78,7 @@ const NEWS_DATA: NewsItem[] = [
 
 export function Home() {
   const { colors } = useTheme();
+  const navigation = useNavigation();
 
   const renderSponsoredBanner = () => (
     <View
@@ -109,37 +111,28 @@ export function Home() {
     </View>
   );
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case "Université":
-        return "#dc2626"; // Red
-      case "Faculté":
-        return "#2563eb"; // Blue
-      case "Département":
-        return "#16a34a"; // Green
-      default:
-        return colors.primary;
-    }
-  };
-
   const renderNewsItem = ({ item }: { item: NewsItem }) => (
     <RectButton
       style={[
         styles.card,
         { backgroundColor: colors.card, borderColor: colors.border },
       ]}
+      onPress={() => navigation.navigate("NewsDetail", { ...item })}
     >
       <View style={styles.cardHeader}>
         <View
           style={[
             styles.categoryBadge,
-            { backgroundColor: getCategoryColor(item.category) + "20" },
+            {
+              backgroundColor:
+                getCategoryColor(item.category, colors.primary) + "20",
+            },
           ]}
         >
           <Text
             style={[
               styles.categoryText,
-              { color: getCategoryColor(item.category) },
+              { color: getCategoryColor(item.category, colors.primary) },
             ]}
           >
             {item.category}

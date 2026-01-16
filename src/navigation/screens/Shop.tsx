@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
 
-export function Boutique() {
+export function Shop() {
   const { colors } = useTheme();
 
   return (
