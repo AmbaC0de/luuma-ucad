@@ -8,9 +8,9 @@ export const AppLightTheme: Theme = {
   dark: false,
   colors: {
     ...DefaultTheme.colors,
-    primary: "#c0ba22",
-    background: "#fcfcdb",
-    card: "#f5f4e5",
+    primary: "#185568",
+    background: "#f3fbfe",
+    card: "#e9f6fc",
     tabBarDark: "#1c1c17",
     error: "#86070f",
     text: "#1b1c13",
