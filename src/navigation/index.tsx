@@ -21,6 +21,7 @@ const HomeTabs = createBottomTabNavigator({
     tabBarActiveTintColor: theme.colors.primary,
     tabBarInactiveTintColor: theme.colors.text,
     headerTintColor: theme.colors.text,
+    headerTitleStyle: { fontSize: 25, fontWeight: "600" },
     tabBarStyle: {
       backgroundColor: theme.colors.background,
       borderTopWidth: 0,
