@@ -22,7 +22,7 @@ const HomeTabs = createBottomTabNavigator({
     tabBarActiveTintColor: theme.colors.primary,
     tabBarInactiveTintColor: theme.colors.text,
     headerTintColor: theme.colors.text,
-    headerTitleStyle: { fontSize: 25, fontWeight: "600" },
+    headerTitleStyle: { fontSize: 24, fontWeight: "600" },
     tabBarStyle: {
       backgroundColor: theme.colors.background,
       borderTopWidth: 0,
@@ -95,6 +95,7 @@ const RootStack = createNativeStackNavigator({
       borderBottomWidth: 0,
       elevation: 0,
     },
+    headerTitleStyle: { fontSize: 24, fontWeight: "600" },
   }),
   screens: {
     HomeTabs: {
