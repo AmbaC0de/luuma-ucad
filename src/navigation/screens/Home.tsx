@@ -1,16 +1,10 @@
 import { useNavigation, useTheme } from "@react-navigation/native";
 import React from "react";
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { RectButton } from "react-native-gesture-handler";
 import { getCategoryColor } from "@src/utils/overall";
+import { Image } from "expo-image";
 
 // Types
 interface NewsItem {
@@ -37,7 +31,7 @@ const SPONSORED_DATA: SponsorItem = {
   content: "Découvrez les forfaits étudiants Orange : 10Go à 1000 FCFA !",
   sponsor: "Orange Sénégal",
   image:
-    "https://cdn.dribbble.com/users/330915/screenshots/6253242/orange_dribbble.jpg?resize=800x600&vertical=center",
+    "https://images.unsplash.com/photo-1768269378478-2c48665c0e51?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 };
 
 const NEWS_DATA: NewsItem[] = [
@@ -89,7 +83,7 @@ export function Home() {
     >
       <View style={styles.bannerHeader}>
         <Text style={[styles.sponsoredLabel, { color: colors.textSecondary }]}>
-          SPONSORED
+          SPONSORISÉ
         </Text>
         <Text style={[styles.sponsorName, { color: colors.primary }]}>
           {SPONSORED_DATA.sponsor}
@@ -98,7 +92,7 @@ export function Home() {
       <Image
         source={{ uri: SPONSORED_DATA.image }}
         style={styles.bannerImage}
-        resizeMode="cover"
+        contentFit="cover"
       />
       <View style={styles.bannerContent}>
         <Text style={[styles.bannerTitle, { color: colors.text }]}>

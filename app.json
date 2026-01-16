@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "luuma-ucad",
+    "name": "Luuma UCAD",
     "slug": "luuma-ucad",
     "version": "1.0.0",
     "orientation": "default",
@@ -17,7 +17,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.luumaucad"
+      "package": "sn.luumaucad.client"
     },
     "web": {
       "favicon": "./assets/favicon.png"
