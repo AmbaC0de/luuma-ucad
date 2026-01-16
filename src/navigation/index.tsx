@@ -16,6 +16,7 @@ import { Documents } from "./screens/Documents";
 import { Shop } from "./screens/Shop";
 import { Account } from "./screens/Account";
 import { NewsDetail } from "./screens/NewsDetail";
+import { ProductDetail } from "./screens/ProductDetail";
 
 const HomeTabs = createBottomTabNavigator({
   screenOptions: ({ theme, navigation }) => ({
@@ -153,7 +154,12 @@ const RootStack = createNativeStackNavigator({
       screen: NewsDetail,
       options: {
         title: "Détails",
-        headerBackTitle: "Retour",
+      },
+    },
+    ProductDetail: {
+      screen: ProductDetail,
+      options: {
+        headerShown: false, // Custom header in component
       },
     },
   },

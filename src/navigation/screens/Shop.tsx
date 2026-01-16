@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "@react-navigation/native";
+import { useTheme, useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import {
   FlatList,
@@ -20,6 +20,7 @@ interface Product {
   category: string;
   image: string;
   rating: number;
+  description?: string;
 }
 
 const CATEGORIES = ["Tout", "Fournitures", "Vêtements", "Tech", "Services"];
@@ -32,6 +33,8 @@ const PRODUCTS: Product[] = [
     category: "Fournitures",
     image: "https://placehold.co/300x300/e9f6fc/185568/png?text=Cahier+UCAD",
     rating: 4.5,
+    description:
+      "Cahier de qualité supérieure aux couleurs de l'UCAD, idéal pour vos prises de notes. 200 pages lignées. Parfait pour les étudiants. Achetez-le dès maintenant et bénéficiez d'une remise spéciale étudiant ! Disponible en stock limité. Ne manquez pas cette opportunité d'ajouter une touche académique à votre matériel scolaire. ",
   },
   {
     id: "2",
@@ -77,6 +80,7 @@ const PRODUCTS: Product[] = [
 
 export function Shop() {
   const { colors } = useTheme();
+  const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Tout");
 
@@ -121,6 +125,7 @@ export function Shop() {
         styles.productCard,
         { backgroundColor: colors.card, borderColor: colors.border },
       ]}
+      onPress={() => navigation.navigate("ProductDetail", { ...item })}
     >
       <Image
         source={{ uri: item.image }}
