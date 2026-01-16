@@ -5,6 +5,7 @@ import { createURL } from "expo-linking";
 import { ThemeProvider } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Navigation } from ".";
+import { StatusBar } from "expo-status-bar";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -15,6 +16,7 @@ const RootNavigation = () => {
   return (
     <ThemeProvider value={appTheme}>
       <SafeAreaProvider>
+        <StatusBar style={appTheme.dark ? "light" : "dark"} />
         <Navigation
           theme={appTheme}
           linking={{

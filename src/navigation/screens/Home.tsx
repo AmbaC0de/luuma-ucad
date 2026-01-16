@@ -9,6 +9,7 @@ import {
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { RectButton } from "react-native-gesture-handler";
 
 // Types
 interface NewsItem {
@@ -122,7 +123,7 @@ export function Home() {
   };
 
   const renderNewsItem = ({ item }: { item: NewsItem }) => (
-    <TouchableOpacity
+    <RectButton
       style={[
         styles.card,
         { backgroundColor: colors.card, borderColor: colors.border },
@@ -172,7 +173,7 @@ export function Home() {
           />
         )}
       </View>
-    </TouchableOpacity>
+    </RectButton>
   );
 
   return (
@@ -226,11 +227,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     overflow: "hidden",
     marginBottom: 8,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
   },
   bannerHeader: {
     flexDirection: "row",
@@ -269,7 +265,7 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    elevation: 1,
+    // elevation: 1,
   },
   cardHeader: {
     flexDirection: "row",

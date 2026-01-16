@@ -10,7 +10,7 @@ export const AppLightTheme: Theme = {
     ...DefaultTheme.colors,
     primary: "#c2410c",
     background: "#fff8f5",
-    card: "#e9f6fc",
+    card: "#fff1ed",
     tabBarDark: "#1c1c17",
     error: "#86070f",
     text: "#241915",
