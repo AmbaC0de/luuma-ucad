@@ -6,6 +6,7 @@ import { BorderlessButton } from "react-native-gesture-handler";
 type IconContainerProps = PropsWithChildren<{
   onPress?: () => void;
   style?: StyleProp<ViewStyle>;
+  contientStyle?: StyleProp<ViewStyle>;
   disabled?: boolean;
   rippleColor?: string;
 }>;
@@ -16,6 +17,7 @@ const IconButton = ({
   style,
   disabled,
   rippleColor,
+  contientStyle,
 }: IconContainerProps) => {
   const { colors } = useTheme();
   return (
@@ -25,7 +27,7 @@ const IconButton = ({
       enabled={!disabled}
       rippleColor={rippleColor ?? colors.card}
     >
-      <View style={styles.content}>{children}</View>
+      <View style={[styles.content, contientStyle]}>{children}</View>
     </BorderlessButton>
   );
 };

@@ -14,7 +14,6 @@ import { Updates } from "./screens/Updates";
 import { NotFound } from "./screens/NotFound";
 import { Documents } from "./screens/Documents";
 import { Shop } from "./screens/Shop";
-import { Account } from "./screens/Account";
 import { NewsDetail } from "./screens/NewsDetail";
 import { ProductDetail } from "./screens/ProductDetail";
 import IconButton from "@src/components/ui/IconButton";
@@ -105,12 +104,6 @@ const RootStack = createNativeStackNavigator({
       screen: Updates,
       options: {
         title: "Notifications",
-      },
-    },
-    Account: {
-      screen: Account,
-      options: {
-        title: "Compte",
       },
     },
     Profile: {
