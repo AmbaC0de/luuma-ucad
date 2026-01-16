@@ -26,6 +26,12 @@ const HomeTabs = createBottomTabNavigator({
       borderTopWidth: 0,
       elevation: 0,
     },
+    headerStyle: {
+      backgroundColor: theme.colors.background,
+      shadowColor: "transparent",
+      borderBottomWidth: 0,
+      elevation: 0,
+    },
 
     headerRight: () => (
       <View style={{ flexDirection: "row", marginRight: 15, gap: 15 }}>
@@ -80,6 +86,14 @@ const HomeTabs = createBottomTabNavigator({
 });
 
 const RootStack = createNativeStackNavigator({
+  screenOptions: ({ theme }) => ({
+    headerStyle: {
+      backgroundColor: theme.colors.background,
+      shadowColor: "transparent",
+      borderBottomWidth: 0,
+      elevation: 0,
+    },
+  }),
   screens: {
     HomeTabs: {
       screen: HomeTabs,
