@@ -1,65 +1,142 @@
-# Starter Template with React Navigation
+# Luuma Ucad
 
-This is a minimal starter template for React Native apps using Expo and React Navigation.
+## 1. Présentation du projet
 
-It includes the following:
+Luuma Ucad est une application mobile innovante destinée aux étudiants de l'Université Cheikh Anta Diop (UCAD). Dans un contexte où l'information est souvent dispersée et difficile d'accès, Luuma Ucad vise à centraliser les flux d'informations académiques, les ressources pédagogiques et les services essentiels à la vie étudiante.
 
-- Example [Native Stack](https://reactnavigation.org/docs/native-stack-navigator) with a nested [Bottom Tab](https://reactnavigation.org/docs/bottom-tab-navigator)
-- Web support with [React Native for Web](https://necolas.github.io/react-native-web/)
-- TypeScript support and configured for React Navigation
-- Automatic [deep link](https://reactnavigation.org/docs/deep-linking) and [URL handling configuration](https://reactnavigation.org/docs/configuring-links)
-- Theme support [based on system appearance](https://reactnavigation.org/docs/themes/#using-the-operating-system-preferences)
-- Expo [Development Build](https://docs.expo.dev/develop/development-builds/introduction/) with [Continuous Native Generation](https://docs.expo.dev/workflow/continuous-native-generation/)
+L'application offre une interface unifiée pour rester informé, étudier efficacement et accéder aux services du campus, réduisant ainsi la dépendance aux canaux de communication informels.
 
-## Getting Started
+## 2. Objectifs
 
-1. Create a new project using this template:
+Le projet s'articule autour de plusieurs objectifs clés :
 
-   ```sh
-   npx create-expo-app@latest --template react-navigation/template
+- **Centralisation** : Regrouper toutes les annonces universitaires en un seul endroit fiable.
+- **Accessibilité** : Faciliter l'accès aux resources pédagogiques (cours, TD, TP) avec un mode hors ligne.
+- **Services** : Proposer une boutique campus intégrée pour les fournitures et services.
+- **Fiabilité** : Offrir une alternative sécurisée et structurée aux groupes informels (WhatsApp, Facebook).
+
+## 3. Fonctionnalités principales
+
+### Informations
+
+- **Annonces hiérarchisées** : Diffusion d'informations ciblées (Université, Faculté, Département).
+- **Agenda académique** : Suivi des événements importants et échéances.
+- **Notifications push** : Alertes pertinentes basées sur le profil de l'étudiant.
+
+### Documents
+
+- **Ressources pédagogiques** : Accès direct aux supports de cours, travaux dirigés et pratiques.
+- **Organisation structurée** : Classement intuitif par Faculté, Département, Niveau et Unité d'Enseignement (UE).
+- **Mode hors ligne** : Téléchargement des documents pour une consultation sans connexion internet.
+- **Gestion de versions** : Accès garanti aux documents les plus récents.
+
+### Boutique Campus
+
+- **Fournitures et services** : Catalogue de produits utiles à la vie universitaire.
+- **Paiement mobile** : Intégration de solutions de paiement sécurisées.
+- **Click & Collect** : Commande en ligne et retrait sur le campus (en développement).
+
+## 4. Architecture générale
+
+L'architecture de Luuma Ucad repose sur une approche **Serverless** moderne pour garantir performance et scalabilité.
+
+- **Mobile First** : L'application React Native communique directement avec le Backend-as-a-Service (BaaS).
+- **Logique Métier** : Hébergée intégralement sur **Convex**, assurant des temps de réponse rapides et une cohérence des données.
+- **Synchronisation Temps Réel** : Les données sont mises à jour instantanément sur les appareils des utilisateurs.
+- **Hiérarchie des Données** : Modélisation stricte des relations Université > Faculté > Département pour le filtrage de contenu.
+
+## 5. Stack technique
+
+### Application Mobile
+
+- **Framework** : Expo (React Native)
+- **Langage** : TypeScript
+- **State Management** : Redux Toolkit + RTK Query
+- **Navigation** : React Navigation
+
+### Backend & Infrastructure
+
+- **BaaS** : Convex (Base de données temps réel, Fonctions Serverless, Auth)
+- **Stockage** : Object Storage (compatible S3) pour les documents PDF
+- **Notifications** : Expo Push Notifications
+
+## 6. Organisation des données
+
+La structure des données reflète l'organisation universitaire :
+
+1. **Université** : Entité racine.
+2. **Faculté** : Division académique principale (ex: FST, FLSH).
+3. **Département** : Subdivision par filière (ex: Mathématiques, Histoire).
+4. **Utilisateur** : Profil étudiant rattaché à un département spécifique.
+
+Cette structure permet un filtrage contextuel automatique : un étudiant en Mathématiques verra prioritairement les annonces de son département et de sa faculté, tout en accédant aux informations générales de l'université.
+
+## 7. Sécurité et gestion des accès
+
+- **Authentification** : Gestion sécurisée des sessions utilisateurs via Convex Auth.
+- **Contrôle d'accès (RBAC)** :
+  - **Données publiques** : Informations générales accessibles à tous les utilisateurs authentifiés.
+  - **Données restreintes** : Documents et annonces spécifiques limités aux étudiants des départements concernés.
+- **Protection des données** : Validation stricte des entrées et isolation des données par contexte académique.
+
+## 8. Installation et lancement (Développement)
+
+Pré-requis : Node.js, npm/pnpm, et un compte Convex.
+
+1. **Cloner le projet**
+
+   ```bash
+   git clone https://github.com/AmbaC0de/luuma-ucad.git
+   cd luuma-ucad
    ```
 
-2. Edit the `app.json` file to configure the `name`, `slug`, `scheme` and bundle identifiers (`ios.bundleIdentifier` and `android.bundleIdentifier`) for your app.
+2. **Installer les dépendances**
 
-3. Edit the `src/App.tsx` file to start working on your app.
+   ```bash
+   npm install
+   ```
 
-## Running the app
+3. **Configurer le Backend (Convex)**
+   Initialiser le projet Convex et lancer le serveur de développement :
 
-- Install the dependencies:
+   ```bash
+   npx convex dev
+   ```
 
-  ```sh
-  npm install
-  ```
+4. **Lancer l'application mobile**
+   Dans un nouveau terminal :
+   ```bash
+   npx expo start
+   ```
+   Utilisez l'application **Expo Go** ou un émulateur pour visualiser le projet.
 
-- Start the development server:
+## 9. Structure du projet
 
-  ```sh
-  npm start
-  ```
+```
+luuma-ucad/
+├── assets/             # Ressources statiques (images, polices)
+├── convex/             # Backend (Schémas BD, Fonctions API)
+├── src/
+│   ├── assets/         # Assets spécifiques au cdoe source
+│   ├── components/     # Composants réutilisables
+│   ├── features/       # Slices Redux et logique métier
+│   ├── navigation/     # Configuration de la navigation
+│   ├── screens/        # Écrans de l'application
+│   ├── services/       # Services externes et API
+│   ├── types.d.ts      # Définitions TypeScript globales
+│   └── App.tsx         # Point d'entrée de l'application
+├── app.json            # Configuration Expo
+├── package.json        # Dépendances
+└── tsconfig.json       # Configuration TypeScript
+```
 
-- Build and run iOS and Android development builds:
+## 10. Évolutions futures
 
-  ```sh
-  npm run ios
-  # or
-  npm run android
-  ```
+- Intégration complète du système de "Click & Collect".
+- Module de chat communautaire modéré par département.
+- Tableau de bord pour l'administration universitaire.
+- Support multilingue (Français / Wolof).
 
-- In the terminal running the development server, press `i` to open the iOS simulator, `a` to open the Android device or emulator, or `w` to open the web browser.
+## 11. Licence
 
-## Notes
-
-This project uses a [development build](https://docs.expo.dev/develop/development-builds/introduction/) and cannot be run with [Expo Go](https://expo.dev/go). To run the app with Expo Go, edit the `package.json` file, remove the `expo-dev-client` package and `--dev-client` flag from the `start` script.
-
-We highly recommend using the development builds for normal development and testing.
-
-The `ios` and `android` folder are gitignored in the project by default as they are automatically generated during the build process ([Continuous Native Generation](https://docs.expo.dev/workflow/continuous-native-generation/)). This means that you should not edit these folders directly and use [config plugins](https://docs.expo.dev/config-plugins/) instead. However, if you need to edit these folders, you can remove them from the `.gitignore` file so that they are tracked by git.
-
-## Resources
-
-- [React Navigation documentation](https://reactnavigation.org/)
-- [Expo documentation](https://docs.expo.dev/)
-
----
-
-Demo assets are from [lucide.dev](https://lucide.dev/)
+Ce projet est sous licence propriétaire. Tous droits réservés à Luuma Ucad.
