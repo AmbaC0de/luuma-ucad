@@ -17,6 +17,7 @@ import { Shop } from "./screens/Shop";
 import { Account } from "./screens/Account";
 import { NewsDetail } from "./screens/NewsDetail";
 import { ProductDetail } from "./screens/ProductDetail";
+import IconButton from "@src/components/ui/IconButton";
 
 const HomeTabs = createBottomTabNavigator({
   screenOptions: ({ theme, navigation }) => ({
@@ -38,22 +39,16 @@ const HomeTabs = createBottomTabNavigator({
 
     headerRight: () => (
       <View style={{ flexDirection: "row", marginRight: 15, gap: 15 }}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Updates")}
-          hitSlop={10}
-        >
+        <IconButton onPress={() => navigation.navigate("Updates")}>
           <Ionicons
             name="notifications-outline"
             size={24}
             color={theme.colors.text}
           />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Compte")}
-          hitSlop={10}
-        >
+        </IconButton>
+        <IconButton onPress={() => navigation.navigate("Profile")}>
           <Ionicons name="person-outline" size={24} color={theme.colors.text} />
-        </TouchableOpacity>
+        </IconButton>
       </View>
     ),
   }),
@@ -120,14 +115,8 @@ const RootStack = createNativeStackNavigator({
     },
     Profile: {
       screen: Profile,
-      linking: {
-        path: ":user(@[a-zA-Z0-9-_]+)",
-        parse: {
-          user: (value) => value.replace(/^@/, ""),
-        },
-        stringify: {
-          user: (value) => `@${value}`,
-        },
+      options: {
+        title: "Profil",
       },
     },
     Settings: {
