@@ -10,7 +10,7 @@
     "scheme": "luumaucad",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.luumaucad"
+      "bundleIdentifier": "com.luumaucad.client"
     },
     "android": {
       "adaptiveIcon": {
@@ -30,7 +30,8 @@
           "backgroundColor": "#ffffff",
           "image": "./assets/splash-icon.png"
         }
-      ]
+      ],
+      "expo-secure-store"
     ]
   }
 }
