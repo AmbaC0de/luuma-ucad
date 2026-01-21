@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { makeRedirectUri } from "expo-auth-session";
@@ -14,8 +14,10 @@ const redirectTo = makeRedirectUri();
 export const SignIn = () => {
   const { signIn } = useAuthActions();
   const { colors } = useTheme();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSignIn = async () => {
+    setIsLoading(true);
     try {
       const { redirect } = await signIn("google", { redirectTo });
       if (Platform.OS === "web") {
@@ -34,6 +36,8 @@ export const SignIn = () => {
       }
     } catch (error) {
       console.error("Sign in error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -46,7 +50,7 @@ export const SignIn = () => {
         <Text style={[styles.subtitle, { color: colors.text + "80" }]}>
           Connectez-vous pour continuer
         </Text>
-        <Button onPress={handleSignIn}>
+        <Button onPress={handleSignIn} loading={isLoading} disabled={isLoading}>
           <Ionicons
             name="logo-google"
             size={24}
@@ -64,7 +68,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    padding: 20,
+    // padding: 20,
   },
   content: {
     alignItems: "center",

@@ -1,7 +1,11 @@
+import { useAuthActions } from "@convex-dev/auth/react";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@react-navigation/native";
 import OptionItem from "@src/components/OptionItem";
 import IconButton from "@src/components/ui/IconButton";
+import { useAppQuery } from "@src/hooks/useAppQuery";
+import { api } from "convex/_generated/api";
+import { useConvexAuth } from "convex/react";
 import React from "react";
 import {
   Image,
@@ -13,19 +17,14 @@ import {
 } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 
-// Mock User Data
-const USER = {
-  name: "Amadou Diallo",
-  email: "amadou.diallo@ucad.edu.sn",
-  studentId: "202312345",
-  faculty: "Faculté des Sciences et Techniques (FST)",
-  department: "Mathématiques et Informatique",
-  level: "Licence 3 (L3)",
-  avatar: "https://placehold.co/200x200/png",
-};
-
 export function Profile() {
   const { colors } = useTheme();
+  const { signOut } = useAuthActions();
+  const { isAuthenticated } = useConvexAuth();
+  const { data: user, isFetching } = useAppQuery(
+    api.users.currentUser,
+    isAuthenticated ? {} : "skip",
+  );
 
   const options: {
     label: string;
@@ -37,7 +36,12 @@ export function Profile() {
     { label: "Notifications", icon: "notifications-outline" },
     { label: "Sécurité", icon: "shield-checkmark-outline" },
     { label: "Aide & Support", icon: "help-circle-outline" },
-    { label: "Se déconnecter", icon: "log-out-outline", isDestructive: true },
+    {
+      label: "Se déconnecter",
+      icon: "log-out-outline",
+      isDestructive: true,
+      onPress: () => signOut(),
+    },
   ];
 
   const renderInfoRow = (label: string, value: string, icon: string) => (
@@ -60,10 +64,11 @@ export function Profile() {
     <ScrollView
       style={[styles.container, { backgroundColor: colors.background }]}
       contentContainerStyle={styles.contentContainer}
+      showsVerticalScrollIndicator={false}
     >
       <View style={styles.header}>
         <View style={[styles.avatarContainer, { borderColor: colors.card }]}>
-          <Image source={{ uri: USER.avatar }} style={styles.avatar} />
+          <Image source={{ uri: user?.image }} style={styles.avatar} />
           <IconButton
             contientStyle={[
               styles.editBadge,
@@ -74,10 +79,10 @@ export function Profile() {
           </IconButton>
         </View>
         <Text style={[styles.userName, { color: colors.text }]}>
-          {USER.name}
+          {user?.name}
         </Text>
         <Text style={[styles.userEmail, { color: colors.textSecondary }]}>
-          {USER.email}
+          {user?.email}
         </Text>
         <View
           style={[
@@ -86,7 +91,7 @@ export function Profile() {
           ]}
         >
           <Text style={[styles.idText, { color: colors.textSecondary }]}>
-            Carte: {USER.studentId}
+            Carte: {user?.matricule}
           </Text>
         </View>
       </View>
@@ -100,11 +105,11 @@ export function Profile() {
           { backgroundColor: colors.card, borderColor: colors.border },
         ]}
       >
-        {renderInfoRow("Niveau", USER.level, "school-outline")}
+        {/* {renderInfoRow("Niveau", user?.level, "school-outline")}
         <View style={[styles.divider, { backgroundColor: colors.border }]} />
-        {renderInfoRow("Faculté", USER.faculty, "business-outline")}
+        {renderInfoRow("Faculté", user?.facultyId, "business-outline")}
         <View style={[styles.divider, { backgroundColor: colors.border }]} />
-        {renderInfoRow("Département", USER.department, "library-outline")}
+        {renderInfoRow("Département", user?.department, "library-outline")} */}
       </View>
 
       <Text style={[styles.sectionHeader, { color: colors.text }]}>
