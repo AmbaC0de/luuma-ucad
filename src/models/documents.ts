@@ -1,5 +1,4 @@
 import { DataModel } from "@convex/_generated/dataModel";
-import { colors } from "react-native-keyboard-controller/lib/typescript/components/KeyboardToolbar/colors";
 
 export type DocumentItem = DataModel["documents"]["document"];
 

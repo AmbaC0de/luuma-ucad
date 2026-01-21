@@ -1,6 +1,7 @@
 import { useAuthActions } from "@convex-dev/auth/react";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@react-navigation/native";
+import { InfoRow } from "@src/components/InfoRow";
 import OptionItem from "@src/components/OptionItem";
 import IconButton from "@src/components/ui/IconButton";
 import { useAppQuery } from "@src/hooks/useAppQuery";
@@ -43,22 +44,6 @@ export function Profile() {
       onPress: () => signOut(),
     },
   ];
-
-  const renderInfoRow = (label: string, value: string, icon: string) => (
-    <View style={styles.infoRow}>
-      <View
-        style={[styles.iconBox, { backgroundColor: colors.primary + "10" }]}
-      >
-        <Ionicons name={icon as any} size={20} color={colors.primary} />
-      </View>
-      <View style={styles.infoContent}>
-        <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>
-          {label}
-        </Text>
-        <Text style={[styles.infoValue, { color: colors.text }]}>{value}</Text>
-      </View>
-    </View>
-  );
 
   return (
     <ScrollView
@@ -105,11 +90,27 @@ export function Profile() {
           { backgroundColor: colors.card, borderColor: colors.border },
         ]}
       >
-        {/* {renderInfoRow("Niveau", user?.level, "school-outline")}
+        {/* <InfoRow label="Niveau" value={user?.level} icon="school-outline" /> */}
         <View style={[styles.divider, { backgroundColor: colors.border }]} />
-        {renderInfoRow("Faculté", user?.facultyId, "business-outline")}
+        <InfoRow
+          label="Faculté"
+          value={user?.faculty?.code ?? "N/A"}
+          icon="business-outline"
+        />
         <View style={[styles.divider, { backgroundColor: colors.border }]} />
-        {renderInfoRow("Département", user?.department, "library-outline")} */}
+        <InfoRow
+          label="Département"
+          value={user?.department?.code ?? "N/A"}
+          icon="library-outline"
+        />
+        <View style={[styles.divider, { backgroundColor: colors.border }]} />
+        {user?.institute?.code && (
+          <InfoRow
+            label="Institut"
+            value={user.institute.code}
+            icon="business-outline"
+          />
+        )}
       </View>
 
       <Text style={[styles.sectionHeader, { color: colors.text }]}>
@@ -191,33 +192,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 32,
   },
-  infoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-  },
-  iconBox: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 16,
-  },
-  infoContent: {
-    flex: 1,
-  },
-  infoLabel: {
-    fontSize: 12,
-    marginBottom: 4,
-  },
-  infoValue: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
   divider: {
     height: 1,
     marginLeft: 72,
+    marginHorizontal: 20,
   },
   optionsContainer: {
     gap: 12,
