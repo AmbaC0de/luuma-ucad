@@ -75,9 +75,9 @@ export const listNews = query({
   handler: async (ctx) => {
     return await ctx.db
       .query("news")
-      // .orderBy("publishedAt", "desc")
-      // .limit(50)
-      .collect();
+      .filter((q) => q.eq(q.field("status"), "PUBLISHED"))
+      .order("desc")
+      .take(50);
   },
 });
 

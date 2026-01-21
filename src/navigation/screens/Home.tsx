@@ -2,18 +2,11 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import React from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { BorderlessButton, RectButton } from "react-native-gesture-handler";
-import { Image, ImageBackground } from "expo-image";
+import { RectButton } from "react-native-gesture-handler";
+import { ImageBackground } from "expo-image";
 import { useAppQuery } from "@src/hooks/useAppQuery";
 import { api } from "@convex/_generated/api";
-import {
-  getScopeColor,
-  getScopeLabel,
-  getStatusColor,
-  getStatusLabel,
-  NewsItem,
-} from "@src/models/news";
-import IconButton from "@src/components/ui/IconButton";
+import { getScopeColor, getScopeLabel, NewsItem } from "@src/models/news";
 
 export function Home() {
   const { colors } = useTheme();
@@ -94,24 +87,6 @@ export function Home() {
               {getScopeLabel(item.scope)}
             </Text>
           </View>
-          <View
-            style={[
-              styles.categoryBadge,
-              {
-                backgroundColor: getStatusColor(item.status) + "20",
-                marginLeft: 8,
-              },
-            ]}
-          >
-            <Text
-              style={[
-                styles.categoryText,
-                { color: getStatusColor(item.status) },
-              ]}
-            >
-              {getStatusLabel(item.status)}
-            </Text>
-          </View>
         </View>
 
         <View style={styles.headerRight}>
@@ -123,20 +98,6 @@ export function Home() {
           >
             {new Date(item.publishedAt).toLocaleDateString()}
           </Text>
-          {/* <BorderlessButton */}
-          <IconButton
-            onPress={() =>
-              SheetManager.show("news-actions-sheet", {
-                payload: { newsId: item._id, currentStatus: item.status },
-              })
-            }
-          >
-            <Ionicons
-              name="ellipsis-vertical"
-              size={20}
-              color={colors.textSecondary}
-            />
-          </IconButton>
         </View>
       </View>
       <View style={styles.cardBody}>
@@ -205,7 +166,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: "700",
-    marginTop: 24,
+    // marginTop: 24,
     marginBottom: 12,
   },
   // Advertisement Banner

@@ -1,92 +1,111 @@
 import { useTheme, StaticScreenProps } from "@react-navigation/native";
-import React from "react";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { getCategoryColor } from "@src/utils/overall";
+import { getScopeColor, getScopeLabel, NewsItem } from "@src/models/news";
+import RichTextViewer from "@src/components/dom-components/RichTextViewer";
+import { ContentSkeleton } from "@src/components/skeletons/ContentSkeleton";
+import { Image } from "expo-image";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-type Props = StaticScreenProps<{
-  id: string;
-  title: string;
-  category: "Université" | "Faculté" | "Département" | "Club";
-  date: string;
-  description: string;
-  image?: string;
-}>;
+type Props = StaticScreenProps<NewsItem>;
 
 export function NewsDetail({ route }: Props) {
   const { colors } = useTheme();
-  const { title, category, date, description, image } = route.params;
+  const { height } = useWindowDimensions();
+  const newsDetail = route.params;
+  const [viewerHeight, setViewerHeight] = useState(height * 0.35);
+  const [isReady, setIsReady] = useState(false);
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: colors.background }]}
-      showsVerticalScrollIndicator={false}
-    >
-      {image ? (
-        <Image
-          source={{ uri: image }}
-          style={styles.image}
-          resizeMode="cover"
-        />
-      ) : (
-        <View
-          style={[styles.placeholderImage, { backgroundColor: colors.card }]}
-        >
-          <Ionicons
-            name="newspaper-outline"
-            size={80}
-            color={colors.primary}
-            style={{ opacity: 0.5 }}
+    <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
+      <ScrollView
+        style={[styles.container, { backgroundColor: colors.background }]}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
+        {newsDetail.imageUrl ? (
+          <Image
+            source={{ uri: newsDetail.imageUrl }}
+            style={styles.image}
+            contentFit="cover"
           />
-        </View>
-      )}
-
-      <View style={styles.content}>
-        <View style={styles.header}>
+        ) : (
           <View
-            style={[
-              styles.badge,
-              {
-                backgroundColor:
-                  getCategoryColor(category, colors.primary) + "20",
-              },
-            ]}
+            style={[styles.placeholderImage, { backgroundColor: colors.card }]}
           >
-            <Text
+            <Ionicons
+              name="newspaper-outline"
+              size={80}
+              color={colors.primary}
+              style={{ opacity: 0.5 }}
+            />
+          </View>
+        )}
+
+        <View style={styles.content}>
+          <View style={styles.header}>
+            <View
               style={[
-                styles.badgeText,
-                { color: getCategoryColor(category, colors.primary) },
+                styles.badge,
+                {
+                  backgroundColor:
+                    getScopeColor(newsDetail.scope, colors.primary) + "20",
+                },
               ]}
             >
-              {category}
+              <Text
+                style={[
+                  styles.badgeText,
+                  { color: getScopeColor(newsDetail.scope, colors.primary) },
+                ]}
+              >
+                {getScopeLabel(newsDetail.scope)}
+              </Text>
+            </View>
+            <Text style={[styles.date, { color: colors.textSecondary }]}>
+              {new Date(newsDetail.publishedAt).toLocaleDateString()}
             </Text>
           </View>
-          <Text style={[styles.date, { color: colors.textSecondary }]}>
-            {date}
+
+          <Text style={[styles.title, { color: colors.text }]}>
+            {newsDetail.title}
           </Text>
+
+          <View style={[styles.divider, { backgroundColor: colors.border }]} />
         </View>
-
-        <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
-
-        <View style={[styles.divider, { backgroundColor: colors.border }]} />
-
-        <Text style={[styles.description, { color: colors.text }]}>
-          {description}
-          {"\n\n"}
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur.
-          {"\n\n"}
-          Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-          officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde
-          omnis iste natus error sit voluptatem accusantium doloremque
-          laudantium.
-        </Text>
-      </View>
-    </ScrollView>
+        <View style={{ minHeight: 100 }}>
+          {!isReady && <ContentSkeleton style={{ paddingHorizontal: 20 }} />}
+          <View
+            style={{
+              height: viewerHeight,
+              opacity: isReady ? 1 : 0,
+              paddingHorizontal: 10,
+            }}
+          >
+            <RichTextViewer
+              content={newsDetail.content}
+              onHeightChange={(h) => {
+                setViewerHeight(h);
+                if (!isReady) {
+                  setTimeout(() => setIsReady(true), 100);
+                }
+              }}
+              style={{
+                textColor: colors.text,
+                accentColor: colors.primary,
+              }}
+            />
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
