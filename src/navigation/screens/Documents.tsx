@@ -2,13 +2,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { useTheme, useNavigation } from "@react-navigation/native";
 import IconButton from "@src/components/ui/IconButton";
 import React, { useState } from "react";
+import { File, Directory, Paths } from "expo-file-system";
 import {
   FlatList,
   StyleSheet,
   Text,
   TextInput,
   View,
-  Linking,
+  ActivityIndicator,
 } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import { useAppQuery } from "@src/hooks/useAppQuery";
@@ -32,8 +33,33 @@ const FILTERS = ["Tout", "Cours", "TD", "TP", "Examen"] as const;
 
 export function Documents() {
   const { colors } = useTheme();
+  const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("Tout");
+  const [downloadingIds, setDownloadingIds] = useState<Set<string>>(new Set());
+
+  const handleDownload = async (item: Document) => {
+    const destinationDir = new Directory(Paths.cache, "pdfDocuments");
+    try {
+      setDownloadingIds((prev) => new Set(prev).add(item.id));
+      destinationDir.create();
+      const outputDirInfo = await File.downloadFileAsync(
+        item.fileUrl,
+        destinationDir,
+      );
+      if (outputDirInfo.exists) {
+        console.log("File downloaded to:", outputDirInfo.uri);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setDownloadingIds((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(item.id);
+        return newSet;
+      });
+    }
+  };
 
   const { data: documentsQuery, isFetching: loadingDocuments } = useAppQuery(
     api.documents.get,
@@ -72,7 +98,14 @@ export function Documents() {
         styles.docCard,
         { backgroundColor: colors.card, borderColor: colors.border },
       ]}
-      onPress={() => item.fileUrl && Linking.openURL(item.fileUrl)}
+      onPress={() => {
+        if (item.fileUrl) {
+          navigation.navigate("PDFViewer", {
+            url: item.fileUrl,
+            title: item.title,
+          });
+        }
+      }}
     >
       <View
         style={[
@@ -104,9 +137,13 @@ export function Documents() {
         </View>
       </View>
 
-      <IconButton>
-        {item.isDownloaded ? (
-          <Ionicons name="checkmark-circle" size={24} color={colors.primary} />
+      <IconButton
+        onPress={() => {
+          handleDownload(item);
+        }}
+      >
+        {downloadingIds.has(item.id) ? (
+          <ActivityIndicator size="small" color={colors.primary} />
         ) : (
           <Ionicons
             name="cloud-download-outline"
