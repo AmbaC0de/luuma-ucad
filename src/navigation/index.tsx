@@ -147,10 +147,10 @@ const RootStack = createNativeStackNavigator({
     },
     PDFViewer: {
       screen: PDFViewer,
-      options: {
-        title: "Document",
-        headerBackTitle: "Retour",
-      },
+      options: ({ theme }) => ({
+        title: "",
+        // headerBackTitle: "Retour",
+      }),
     },
   },
 });

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -27,6 +27,13 @@ export const PDFViewer = ({ route }: Props) => {
 
   const source = { uri: url, cache: true };
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: title || "Document PDF",
+      // headerBackTitle: "Retour",
+    });
+  }, [navigation, title]);
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {error ? (
@@ -52,10 +59,7 @@ export const PDFViewer = ({ route }: Props) => {
             setError("Impossible de charger le document PDF");
             setLoading(false);
           }}
-          onPressLink={(uri) => {
-            // console.log(`Link pressed: ${uri}`);
-          }}
-          style={styles.pdf}
+          style={[styles.pdf, { backgroundColor: colors.background }]}
           renderActivityIndicator={() => (
             <ActivityIndicator
               size="large"
