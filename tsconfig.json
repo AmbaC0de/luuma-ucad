@@ -12,7 +12,9 @@
       "@assets/*": ["src/assets/*"],
       "@slices/*": ["src/store/slices/*"],
       "@endpoints/*": ["src/store/endpoints/*"],
-      "@redux-store/*": ["src/store/*"]
+      "@redux-store/*": ["src/store/*"],
+      "@utils/*": ["src/utils/*"],
+      "@convex/*": ["./convex/*"]
     }
   }
 }

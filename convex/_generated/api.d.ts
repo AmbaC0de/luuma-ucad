@@ -10,6 +10,8 @@
 
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
+import type * as news from "../news.js";
+import type * as sponsors from "../sponsors.js";
 import type * as users from "../users.js";
 
 import type {
@@ -21,6 +23,8 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   http: typeof http;
+  news: typeof news;
+  sponsors: typeof sponsors;
   users: typeof users;
 }>;
 
