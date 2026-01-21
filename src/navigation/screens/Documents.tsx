@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "@react-navigation/native";
+import { useTheme, useNavigation } from "@react-navigation/native";
 import IconButton from "@src/components/ui/IconButton";
 import React, { useState } from "react";
 import {
@@ -7,10 +7,14 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
+  Linking,
 } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
+import { useAppQuery } from "@src/hooks/useAppQuery";
+import { api } from "@convex/_generated/api";
+import { getDocumentTypeLabel, getIconColor } from "@src/models/documents";
+import { formatBytes, formatDate } from "@src/utils/format";
 
 interface Document {
   id: string;
@@ -20,73 +24,30 @@ interface Document {
   size: string;
   date: string;
   isDownloaded: boolean;
+  fileUrl: string;
 }
 
-const DOCUMENTS: Document[] = [
-  {
-    id: "1",
-    title: "Introduction à l'Algèbre Linéaire",
-    type: "Cours",
-    ue: "MATH101",
-    size: "2.4 MB",
-    date: "12 Jan 2026",
-    isDownloaded: true,
-  },
-  {
-    id: "2",
-    title: "Série d'exercices N°1 - Thermodynamique",
-    type: "TD",
-    ue: "PHYS102",
-    size: "850 KB",
-    date: "10 Jan 2026",
-    isDownloaded: false,
-  },
-  {
-    id: "3",
-    title: "TP Chimie Organique - Synthèse de l'Aspirine",
-    type: "TP",
-    ue: "CHIM201",
-    size: "1.2 MB",
-    date: "08 Jan 2026",
-    isDownloaded: false,
-  },
-  {
-    id: "4",
-    title: "Sujet Examen Session Normale 2025",
-    type: "Examen",
-    ue: "INFO101",
-    size: "540 KB",
-    date: "05 Jan 2026",
-    isDownloaded: true,
-  },
-  {
-    id: "5",
-    title: "Cours Complet - Histoire Contemporaine",
-    type: "Cours",
-    ue: "HIST203",
-    size: "5.8 MB",
-    date: "03 Jan 2026",
-    isDownloaded: false,
-  },
-  {
-    id: "6",
-    title: "TD Analyse Numérique - Corrections",
-    type: "TD",
-    ue: "MATH202",
-    size: "1.5 MB",
-    date: "02 Jan 2026",
-    isDownloaded: false,
-  },
-];
-
-const FILTERS = ["Tout", "Cours", "TD", "TP", "Examen"];
+const FILTERS = ["Tout", "Cours", "TD", "TP", "Examen"] as const;
 
 export function Documents() {
   const { colors } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("Tout");
 
-  const filteredDocs = DOCUMENTS.filter((doc) => {
+  const { data: documentsQuery, isFetching } = useAppQuery(api.documents.get);
+
+  const documents = (documentsQuery || []).map((doc) => ({
+    id: doc._id,
+    title: doc.title,
+    type: getDocumentTypeLabel(doc.type),
+    ue: doc.description || "N/A",
+    size: formatBytes(doc.size),
+    date: formatDate(doc._creationTime),
+    isDownloaded: false,
+    fileUrl: doc.fileUrl,
+  }));
+
+  const filteredDocs = documents.filter((doc) => {
     const matchesFilter = activeFilter === "Tout" || doc.type === activeFilter;
     const matchesSearch =
       doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -94,38 +55,24 @@ export function Documents() {
     return matchesFilter && matchesSearch;
   });
 
-  const getIconColor = (type: string) => {
-    switch (type) {
-      case "Cours":
-        return "#2563eb"; // Blue
-      case "TD":
-        return "#16a34a"; // Green
-      case "TP":
-        return "#d97706"; // Amber
-      case "Examen":
-        return "#dc2626"; // Red
-      default:
-        return colors.text;
-    }
-  };
-
   const renderItem = ({ item }: { item: Document }) => (
     <RectButton
       style={[
         styles.docCard,
         { backgroundColor: colors.card, borderColor: colors.border },
       ]}
+      onPress={() => item.fileUrl && Linking.openURL(item.fileUrl)}
     >
       <View
         style={[
           styles.iconContainer,
-          { backgroundColor: getIconColor(item.type) + "20" },
+          { backgroundColor: getIconColor(item.type, colors.text) + "20" },
         ]}
       >
         <Ionicons
           name="document-text"
           size={28}
-          color={getIconColor(item.type)}
+          color={getIconColor(item.type, colors.text)}
         />
       </View>
 
