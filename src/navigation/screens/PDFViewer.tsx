@@ -30,7 +30,6 @@ export const PDFViewer = ({ route }: Props) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: title || "Document PDF",
-      // headerBackTitle: "Retour",
     });
   }, [navigation, title]);
 
