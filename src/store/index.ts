@@ -6,24 +6,24 @@ import {
   themeKey,
 } from "@src/storage-driver/mmkvDriver";
 import { rememberEnhancer, rememberReducer } from "redux-remember";
-import { api } from "./apiService";
+import { rtkApi } from "./apiService";
 import themeReducer from "./slices/theme";
 
 const reducers = {
-  [api.reducerPath]: api.reducer,
+  [rtkApi.reducerPath]: rtkApi.reducer,
   theme: themeReducer,
 };
 
-const rememberedKeys = [themeKey, ...secureKeys, api.reducerPath];
+const rememberedKeys = [themeKey, ...secureKeys, rtkApi.reducerPath];
 const rememberedReducer = rememberReducer(reducers);
 
 export const store = configureStore({
   reducer: rememberedReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(api.middleware),
+    getDefaultMiddleware().concat(rtkApi.middleware),
   enhancers: (getDefaultEnhancers) =>
     getDefaultEnhancers().concat(
-      rememberEnhancer(mmkvDriver, rememberedKeys, { prefix: "" })
+      rememberEnhancer(mmkvDriver, rememberedKeys, { prefix: "" }),
     ),
 });
 

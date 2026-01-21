@@ -7,7 +7,7 @@ import { API_URL } from "@src/config/env";
 
 const axiosBaseQuery =
   (
-    { baseUrl }: { baseUrl: string } = { baseUrl: "" }
+    { baseUrl }: { baseUrl: string } = { baseUrl: "" },
   ): BaseQueryFn<
     {
       url: string;
@@ -45,7 +45,7 @@ const axiosBaseQuery =
     }
   };
 
-export const api = createApi({
+export const rtkApi = createApi({
   baseQuery: axiosBaseQuery({
     baseUrl: API_URL,
   }),

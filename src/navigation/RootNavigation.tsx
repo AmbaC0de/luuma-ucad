@@ -8,12 +8,33 @@ import { Navigation } from ".";
 import { StatusBar } from "expo-status-bar";
 import { Authenticated, Unauthenticated, useConvexAuth } from "convex/react";
 import { SignIn } from "./screens/SignIn";
-import { SheetProvider } from "react-native-actions-sheet";
+import { SheetProvider, SheetManager } from "react-native-actions-sheet";
 import Sheets from "@src/components/bottom-sheets/sheets";
+import { useQuery } from "convex/react";
+import { api } from "@convex/_generated/api";
 
 SplashScreen.preventAutoHideAsync();
 
 const prefix = createURL("/");
+
+const ProfileCheck = () => {
+  const user = useQuery(api.users.currentUser);
+
+  useEffect(() => {
+    // Wait for user to be loaded
+    if (user === undefined) return;
+
+    // If user is logged in (user != null) and missing info
+    if (user && (!user.matricule || !user.facultyId)) {
+      // Delay slightly to ensure navigation is ready or sheet provider is ready
+      setTimeout(() => {
+        SheetManager.show("profile-completion-sheet");
+      }, 500);
+    }
+  }, [user]);
+
+  return null;
+};
 
 const RootNavigation = () => {
   const { appTheme } = useThemeManager();
@@ -32,6 +53,7 @@ const RootNavigation = () => {
         <SheetProvider>
           <Sheets />
           <Authenticated>
+            <ProfileCheck />
             <Navigation
               theme={appTheme}
               linking={{
