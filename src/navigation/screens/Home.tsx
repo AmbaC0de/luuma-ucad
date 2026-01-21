@@ -7,13 +7,24 @@ import { ImageBackground } from "expo-image";
 import { useAppQuery } from "@src/hooks/useAppQuery";
 import { api } from "@convex/_generated/api";
 import { getScopeColor, getScopeLabel, NewsItem } from "@src/models/news";
+import { HomeSkeleton } from "@src/components/skeletons/HomeSkeleton";
 
 export function Home() {
   const { colors } = useTheme();
   const navigation = useNavigation();
-  const { data: news, isFetching } = useAppQuery(api.news.listNews);
+  const { data: news, isFetching: loadingNews } = useAppQuery(
+    api.news.listNews,
+  );
   const { data: sponsors } = useAppQuery(api.sponsors.getActive);
   const activeSponsor = sponsors && sponsors.length > 0 ? sponsors[0] : null;
+
+  if (loadingNews) {
+    return (
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <HomeSkeleton />
+      </View>
+    );
+  }
 
   const renderSponsoredBanner = () => {
     if (!activeSponsor) return null;
