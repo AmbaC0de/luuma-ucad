@@ -6,7 +6,7 @@ import RootNavigation from "./navigation/RootNavigation";
 import { ConvexReactClient } from "convex/react";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { Platform } from "react-native";
-import secureStorage from "./storage-driver copy/secureStoreDriver";
+import secureStorage from "./storage-driver/secureStoreDriver";
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
   unsavedChangesWarning: false,
