@@ -13,6 +13,7 @@ export default defineSchema({
     matricule: v.optional(v.string()),
     facultyId: v.optional(v.id("faculties")),
     departmentId: v.optional(v.id("departments")),
+    instituteId: v.optional(v.id("institutes")),
     email: v.optional(v.string()),
     image: v.optional(v.string()),
     isAnonymous: v.optional(v.boolean()),

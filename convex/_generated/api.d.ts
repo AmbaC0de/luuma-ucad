@@ -9,8 +9,11 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as departments from "../departments.js";
 import type * as documents from "../documents.js";
+import type * as faculties from "../faculties.js";
 import type * as http from "../http.js";
+import type * as institutes from "../institutes.js";
 import type * as news from "../news.js";
 import type * as productCategories from "../productCategories.js";
 import type * as products from "../products.js";
@@ -25,8 +28,11 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  departments: typeof departments;
   documents: typeof documents;
+  faculties: typeof faculties;
   http: typeof http;
+  institutes: typeof institutes;
   news: typeof news;
   productCategories: typeof productCategories;
   products: typeof products;

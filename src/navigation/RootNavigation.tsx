@@ -8,6 +8,8 @@ import { Navigation } from ".";
 import { StatusBar } from "expo-status-bar";
 import { Authenticated, Unauthenticated, useConvexAuth } from "convex/react";
 import { SignIn } from "./screens/SignIn";
+import { SheetProvider } from "react-native-actions-sheet";
+import Sheets from "@src/components/bottom-sheets/sheets";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -27,18 +29,21 @@ const RootNavigation = () => {
     <ThemeProvider value={appTheme}>
       <SafeAreaProvider>
         <StatusBar style={appTheme.dark ? "light" : "dark"} />
-        <Authenticated>
-          <Navigation
-            theme={appTheme}
-            linking={{
-              enabled: "auto",
-              prefixes: [prefix],
-            }}
-          />
-        </Authenticated>
-        <Unauthenticated>
-          <SignIn />
-        </Unauthenticated>
+        <SheetProvider>
+          <Sheets />
+          <Authenticated>
+            <Navigation
+              theme={appTheme}
+              linking={{
+                enabled: "auto",
+                prefixes: [prefix],
+              }}
+            />
+          </Authenticated>
+          <Unauthenticated>
+            <SignIn />
+          </Unauthenticated>
+        </SheetProvider>
       </SafeAreaProvider>
     </ThemeProvider>
   );

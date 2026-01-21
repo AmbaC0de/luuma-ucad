@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Platform } from "react-native";
+import { View, StyleSheet, Platform, Alert } from "react-native";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { makeRedirectUri } from "expo-auth-session";
 import { openAuthSessionAsync } from "expo-web-browser";
@@ -20,9 +20,11 @@ export const SignIn = () => {
     setIsLoading(true);
     try {
       const { redirect } = await signIn("google", { redirectTo });
+
       if (Platform.OS === "web") {
         return;
       }
+
       if (!redirect) return;
 
       const result = await openAuthSessionAsync(
@@ -36,6 +38,7 @@ export const SignIn = () => {
       }
     } catch (error) {
       console.error("Sign in error:", error);
+      Alert.alert("Erreur", "Une erreur est survenue lors de la connexion.");
     } finally {
       setIsLoading(false);
     }
@@ -68,7 +71,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    // padding: 20,
   },
   content: {
     alignItems: "center",
