@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme, useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   FlatList,
   Image,
@@ -9,89 +9,45 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  ActivityIndicator,
 } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
-
-// Types
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  category: string;
-  image: string;
-  rating: number;
-  description?: string;
-}
-
-const CATEGORIES = ["Tout", "Fournitures", "Vêtements", "Tech", "Services"];
-
-const PRODUCTS: Product[] = [
-  {
-    id: "1",
-    name: "Cahier UCAD 200 pages",
-    price: 1500,
-    category: "Fournitures",
-    image: "https://placehold.co/300x300/e9f6fc/185568/png?text=Cahier+UCAD",
-    rating: 4.5,
-    description:
-      "Cahier de qualité supérieure aux couleurs de l'UCAD, idéal pour vos prises de notes. 200 pages lignées. Parfait pour les étudiants. Achetez-le dès maintenant et bénéficiez d'une remise spéciale étudiant ! Disponible en stock limité. Ne manquez pas cette opportunité d'ajouter une touche académique à votre matériel scolaire. ",
-  },
-  {
-    id: "2",
-    name: "T-shirt FST Promo 2026",
-    price: 5000,
-    category: "Vêtements",
-    image: "https://placehold.co/300x300/e9f6fc/185568/png?text=T-Shirt+FST",
-    rating: 4.8,
-  },
-  {
-    id: "3",
-    name: "Clé USB 32Go",
-    price: 3500,
-    category: "Tech",
-    image: "https://placehold.co/300x300/e9f6fc/185568/png?text=USB+32Go",
-    rating: 4.2,
-  },
-  {
-    id: "4",
-    name: "Impression Mémoire (N&B)",
-    price: 25,
-    category: "Services",
-    image: "https://placehold.co/300x300/e9f6fc/185568/png?text=Impression",
-    rating: 5.0,
-  },
-  {
-    id: "5",
-    name: "Stylo 4 Couleurs",
-    price: 500,
-    category: "Fournitures",
-    image: "https://placehold.co/300x300/e9f6fc/185568/png?text=Stylo",
-    rating: 4.0,
-  },
-  {
-    id: "6",
-    name: "Sweatshirt UCAD",
-    price: 12000,
-    category: "Vêtements",
-    image: "https://placehold.co/300x300/e9f6fc/185568/png?text=Sweat+UCAD",
-    rating: 4.9,
-  },
-];
+import { useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import { Doc } from "../../../convex/_generated/dataModel";
+import { formatPrice } from "@src/utils/format";
 
 export function Shop() {
   const { colors } = useTheme();
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("Tout");
+  const [selectedCategory, setSelectedCategory] = useState<string>("Tout");
 
-  const filteredProducts = PRODUCTS.filter((product) => {
-    const matchesCategory =
-      selectedCategory === "Tout" || product.category === selectedCategory;
-    const matchesSearch = product.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const products = useQuery(api.products.get);
+  const categories = useQuery(api.productCategories.get);
+
+  const categoryList = useMemo(() => {
+    if (!categories) return ["Tout"];
+    return ["Tout", ...categories.map((c) => c.name)];
+  }, [categories]);
+
+  const getCategoryName = (categoryId: string) => {
+    return categories?.find((c) => c._id === categoryId)?.name || "Inconnu";
+  };
+
+  const filteredProducts = useMemo(() => {
+    if (!products) return [];
+
+    return products.filter((product) => {
+      const categoryName = getCategoryName(product.category);
+      const matchesCategory =
+        selectedCategory === "Tout" || categoryName === selectedCategory;
+      const matchesSearch = product.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [products, selectedCategory, searchQuery, categories]);
 
   const renderCategoryItem = ({ item }: { item: string }) => {
     const isSelected = selectedCategory === item;
@@ -119,22 +75,36 @@ export function Shop() {
     );
   };
 
-  const renderProductItem = ({ item }: { item: Product }) => (
+  const renderProductItem = ({ item }: { item: Doc<"products"> }) => (
     <RectButton
       style={[
         styles.productCard,
         { backgroundColor: colors.card, borderColor: colors.border },
       ]}
-      onPress={() => navigation.navigate("ProductDetail", { ...item })}
+      onPress={() =>
+        navigation.navigate("ProductDetail", {
+          ...item,
+          id: item._id,
+          image: item.images?.[0] ?? "",
+          category: getCategoryName(item.category),
+          rating: 0, //TODO: Default rating, to be implemented
+        })
+      }
     >
       <Image
-        source={{ uri: item.image }}
+        source={{
+          uri:
+            item.images?.[0] ??
+            "https://placehold.co/300x300/e9f6fc/185568/png?text=No+Image",
+        }}
         style={styles.productImage}
         resizeMode="cover"
       />
       <View style={styles.productContent}>
         <View style={styles.productBadge}>
-          <Text style={styles.productBadgeText}>{item.category}</Text>
+          <Text style={styles.productBadgeText}>
+            {getCategoryName(item.category)}
+          </Text>
         </View>
         <Text
           style={[styles.productName, { color: colors.text }]}
@@ -144,7 +114,7 @@ export function Shop() {
         </Text>
         <View style={styles.productFooter}>
           <Text style={[styles.productPrice, { color: colors.primary }]}>
-            {item.price} FCFA
+            {formatPrice(item.price)}
           </Text>
         </View>
       </View>
@@ -175,7 +145,7 @@ export function Shop() {
         </View>
         <FlatList
           horizontal
-          data={CATEGORIES}
+          data={categoryList}
           renderItem={renderCategoryItem}
           keyExtractor={(item) => item}
           showsHorizontalScrollIndicator={false}
@@ -183,15 +153,30 @@ export function Shop() {
         />
       </View>
 
-      <FlatList
-        data={filteredProducts}
-        renderItem={renderProductItem}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
-        columnWrapperStyle={styles.columnWrapper}
-        contentContainerStyle={styles.productList}
-        showsVerticalScrollIndicator={false}
-      />
+      {!products ? (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      ) : (
+        <FlatList
+          data={filteredProducts}
+          renderItem={renderProductItem}
+          keyExtractor={(item) => item._id}
+          numColumns={2}
+          columnWrapperStyle={styles.columnWrapper}
+          contentContainerStyle={styles.productList}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            <View style={{ alignItems: "center", marginTop: 50 }}>
+              <Text style={{ color: colors.textSecondary }}>
+                Aucun produit trouvé
+              </Text>
+            </View>
+          }
+        />
+      )}
     </View>
   );
 }
