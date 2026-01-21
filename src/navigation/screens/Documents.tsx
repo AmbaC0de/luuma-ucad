@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme, useNavigation } from "@react-navigation/native";
 import IconButton from "@src/components/ui/IconButton";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { File, Directory, Paths } from "expo-file-system";
 import {
   FlatList,
@@ -17,6 +17,12 @@ import { api } from "@convex/_generated/api";
 import { getDocumentTypeLabel, getIconColor } from "@src/models/documents";
 import { formatBytes, formatDate } from "@src/utils/format";
 import { DocumentsSkeleton } from "@src/components/skeletons/DocumentsSkeleton";
+import { useAppDispatch, useAppSelector } from "@src/store/hooks";
+import {
+  addDownloadedDocument,
+  removeDownloadedDocument,
+  selectDownloadedDocuments,
+} from "@src/store/slices/documents";
 
 interface Document {
   id: string;
@@ -27,6 +33,8 @@ interface Document {
   date: string;
   isDownloaded: boolean;
   fileUrl: string;
+  rawSize?: number | null;
+  rawDate: number;
 }
 
 const FILTERS = ["Tout", "Cours", "TD", "TP", "Examen"] as const;
@@ -34,24 +42,65 @@ const FILTERS = ["Tout", "Cours", "TD", "TP", "Examen"] as const;
 export function Documents() {
   const { colors } = useTheme();
   const navigation = useNavigation();
+  const dispatch = useAppDispatch();
+  const downloadedDocs = useAppSelector(selectDownloadedDocuments);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("Tout");
   const [downloadingIds, setDownloadingIds] = useState<Set<string>>(new Set());
 
+  const { data: documentsQuery, isFetching: loadingDocuments } = useAppQuery(
+    api.documents.get,
+  );
+
   const handleDownload = async (item: Document) => {
-    const destinationDir = new Directory(Paths.cache, "pdfDocuments");
+    // Si déjà téléchargé, suppression
+    if (item.isDownloaded) {
+      try {
+        if (item.fileUrl) {
+          const file = new File(item.fileUrl);
+          if (file.exists) {
+            file.delete();
+          }
+        }
+        dispatch(removeDownloadedDocument(item.id));
+      } catch (e) {
+        console.error("Error deleting file:", e);
+        dispatch(removeDownloadedDocument(item.id));
+      }
+      return;
+    }
+
+    // Nouveau téléchargement
+    const destinationDir = new Directory(Paths.document, "pdfDocuments");
     try {
       setDownloadingIds((prev) => new Set(prev).add(item.id));
-      destinationDir.create();
+      if (!destinationDir.exists) {
+        destinationDir.create();
+      }
+
       const outputDirInfo = await File.downloadFileAsync(
         item.fileUrl,
         destinationDir,
       );
+
       if (outputDirInfo.exists) {
-        console.log("File downloaded to:", outputDirInfo.uri);
+        dispatch(
+          addDownloadedDocument({
+            id: item.id,
+            title: item.title,
+            type: item.type,
+            ue: item.ue,
+            size: item.rawSize,
+            date: item.rawDate,
+            remoteUrl: item.fileUrl,
+            localUri: outputDirInfo.uri,
+          }),
+        );
       }
     } catch (e) {
       console.error(e);
+      alert("Erreur lors du téléchargement");
     } finally {
       setDownloadingIds((prev) => {
         const newSet = new Set(prev);
@@ -61,28 +110,51 @@ export function Documents() {
     }
   };
 
-  const { data: documentsQuery, isFetching: loadingDocuments } = useAppQuery(
-    api.documents.get,
-  );
+  const documents: Document[] = useMemo(() => {
+    const combinedDocs = new Map<string, Document>();
 
-  if (documentsQuery === undefined) {
-    return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <DocumentsSkeleton />
-      </View>
+    // 1. Documents téléchargés (Offline)
+    Object.values(downloadedDocs).forEach((doc) => {
+      combinedDocs.set(doc.id, {
+        id: doc.id,
+        title: doc.title,
+        type: doc.type as any,
+        ue: doc.ue,
+        size: formatBytes(doc.size),
+        date: formatDate(doc.date),
+        isDownloaded: true,
+        fileUrl: doc.localUri,
+        rawSize: doc.size,
+        rawDate: doc.date,
+      });
+    });
+
+    // 2. Documents distants (Online) - Met à jour ou ajoute
+    if (documentsQuery) {
+      documentsQuery.forEach((doc) => {
+        const isDownloaded = !!downloadedDocs[doc._id];
+        const existingDoc = combinedDocs.get(doc._id);
+
+        combinedDocs.set(doc._id, {
+          id: doc._id,
+          title: doc.title,
+          type: getDocumentTypeLabel(doc.type),
+          ue: doc.description || "N/A",
+          size: formatBytes(doc.size),
+          date: formatDate(doc._creationTime),
+          isDownloaded: isDownloaded,
+          fileUrl:
+            isDownloaded && existingDoc ? existingDoc.fileUrl : doc.fileUrl,
+          rawSize: doc.size,
+          rawDate: doc._creationTime,
+        });
+      });
+    }
+
+    return Array.from(combinedDocs.values()).sort(
+      (a, b) => b.rawDate - a.rawDate,
     );
-  }
-
-  const documents = (documentsQuery || []).map((doc) => ({
-    id: doc._id,
-    title: doc.title,
-    type: getDocumentTypeLabel(doc.type),
-    ue: doc.description || "N/A",
-    size: formatBytes(doc.size),
-    date: formatDate(doc._creationTime),
-    isDownloaded: false,
-    fileUrl: doc.fileUrl,
-  }));
+  }, [documentsQuery, downloadedDocs]);
 
   const filteredDocs = documents.filter((doc) => {
     const matchesFilter = activeFilter === "Tout" || doc.type === activeFilter;
@@ -91,6 +163,14 @@ export function Documents() {
       doc.ue.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
+
+  if (loadingDocuments) {
+    return (
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <DocumentsSkeleton />
+      </View>
+    );
+  }
 
   const renderItem = ({ item }: { item: Document }) => (
     <RectButton
@@ -139,16 +219,22 @@ export function Documents() {
 
       <IconButton
         onPress={() => {
-          handleDownload(item);
+          if (!item.isDownloaded) {
+            handleDownload(item);
+          }
         }}
       >
         {downloadingIds.has(item.id) ? (
           <ActivityIndicator size="small" color={colors.primary} />
         ) : (
           <Ionicons
-            name="cloud-download-outline"
+            name={
+              item.isDownloaded
+                ? "checkmark-circle-outline"
+                : "cloud-download-outline"
+            }
             size={24}
-            color={colors.textSecondary}
+            color={item.isDownloaded ? colors.primary : colors.textSecondary}
           />
         )}
       </IconButton>

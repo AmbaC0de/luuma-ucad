@@ -8,7 +8,7 @@ export const formatPrice = (price: number): string => {
   }).format(price);
 };
 
-export const formatBytes = (bytes?: number, decimals = 2) => {
+export const formatBytes = (bytes?: number | null, decimals = 2) => {
   if (!bytes) return "0 B";
   const k = 1024;
   const dm = decimals < 0 ? 0 : decimals;
