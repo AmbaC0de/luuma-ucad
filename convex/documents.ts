@@ -1,10 +1,28 @@
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
 export const get = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("documents").order("desc").collect();
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not signed in");
+
+    const user = await ctx.db.get(userId);
+    if (!user) throw new Error("User not found");
+
+    return await ctx.db
+      .query("documents")
+      .filter((q) =>
+        q.or(
+          q.eq(q.field("scope"), "UNIVERSITY"),
+          q.eq(q.field("facultyId"), user.facultyId),
+          q.eq(q.field("departmentId"), user.departmentId),
+          q.eq(q.field("instituteId"), user.instituteId),
+        ),
+      )
+      .order("desc")
+      .take(50);
   },
 });
 

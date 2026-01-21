@@ -47,9 +47,11 @@ export default defineSchema({
       v.literal("UNIVERSITY"),
       v.literal("FACULTY"),
       v.literal("DEPARTMENT"),
+      v.literal("INSTITUTE"),
     ),
     facultyId: v.optional(v.id("faculties")),
     departmentId: v.optional(v.id("departments")),
+    instituteId: v.optional(v.id("institutes")),
     isPinned: v.boolean(),
     status: v.union(
       v.literal("DRAFT"),

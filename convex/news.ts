@@ -1,6 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
+import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const postNews = mutation({
   args: {
@@ -73,9 +74,23 @@ export const deleteNews = mutation({
 export const listNews = query({
   args: {},
   handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not signed in");
+
+    const user = await ctx.db.get(userId);
+    if (!user) throw new Error("User not found");
+
     return await ctx.db
       .query("news")
-      .filter((q) => q.eq(q.field("status"), "PUBLISHED"))
+      .filter((q) =>
+        q.or(
+          q.eq(q.field("status"), "PUBLISHED"),
+          q.eq(q.field("scope"), "UNIVERSITY"),
+          q.eq(q.field("facultyId"), user.facultyId),
+          q.eq(q.field("departmentId"), user.departmentId),
+          q.eq(q.field("instituteId"), user.instituteId),
+        ),
+      )
       .order("desc")
       .take(50);
   },
