@@ -48,12 +48,20 @@ const Button = ({
     >
       {loading && (
         <ActivityIndicator
-          color={variant === "contained" ? colors.dark : colors.text}
+          color={variant === "contained" ? colors.white : colors.primary}
           style={{ marginRight: 8 }}
         />
       )}
       {typeof children === "string" ? (
-        <Text style={[styles.text, textStyle]}>{children}</Text>
+        <Text
+          style={[
+            styles.text,
+            textStyle,
+            { color: variant === "contained" ? colors.white : colors.primary },
+          ]}
+        >
+          {children}
+        </Text>
       ) : (
         children
       )}
@@ -69,17 +77,8 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
   },
   text: {
-    color: "black",
     fontSize: 18,
     fontWeight: "bold",
   },
@@ -91,7 +90,6 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 16,
     borderWidth: 1,
-    marginBottom: 16,
   },
 });
 

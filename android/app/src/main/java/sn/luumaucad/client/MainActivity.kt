@@ -1,4 +1,4 @@
-package com.luumaucad
+package sn.luumaucad.client
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

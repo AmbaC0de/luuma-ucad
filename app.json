@@ -7,7 +7,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "scheme": "luumaucad",
+    "scheme": "luumaucadclient",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.luumaucad.client"
@@ -31,7 +31,8 @@
           "image": "./assets/splash-icon.png"
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-web-browser"
     ]
   }
 }

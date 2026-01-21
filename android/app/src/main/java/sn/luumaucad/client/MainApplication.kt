@@ -1,4 +1,4 @@
-package com.luumaucad
+package sn.luumaucad.client
 
 import android.app.Application
 import android.content.res.Configuration
