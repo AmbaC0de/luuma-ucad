@@ -15,6 +15,7 @@ import { useAppQuery } from "@src/hooks/useAppQuery";
 import { api } from "@convex/_generated/api";
 import { getDocumentTypeLabel, getIconColor } from "@src/models/documents";
 import { formatBytes, formatDate } from "@src/utils/format";
+import { DocumentsSkeleton } from "@src/components/skeletons/DocumentsSkeleton";
 
 interface Document {
   id: string;
@@ -34,7 +35,17 @@ export function Documents() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("Tout");
 
-  const { data: documentsQuery, isFetching } = useAppQuery(api.documents.get);
+  const { data: documentsQuery, isFetching: loadingDocuments } = useAppQuery(
+    api.documents.get,
+  );
+
+  if (documentsQuery === undefined) {
+    return (
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <DocumentsSkeleton />
+      </View>
+    );
+  }
 
   const documents = (documentsQuery || []).map((doc) => ({
     id: doc._id,
