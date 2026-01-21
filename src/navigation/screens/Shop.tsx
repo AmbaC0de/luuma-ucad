@@ -7,15 +7,14 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
-  ActivityIndicator,
 } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
-import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Doc } from "../../../convex/_generated/dataModel";
 import { formatPrice } from "@src/utils/format";
+import { useAppQuery } from "@src/hooks/useAppQuery";
+import { ShopSkeleton } from "@src/components/skeletons/ShopSkeleton";
 
 export function Shop() {
   const { colors } = useTheme();
@@ -23,8 +22,12 @@ export function Shop() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("Tout");
 
-  const products = useQuery(api.products.get);
-  const categories = useQuery(api.productCategories.get);
+  const { data: products, isFetching: loadingProducts } = useAppQuery(
+    api.products.get,
+  );
+  const { data: categories, isFetching: loadingCategories } = useAppQuery(
+    api.productCategories.get,
+  );
 
   const categoryList = useMemo(() => {
     if (!categories) return ["Tout"];
@@ -121,6 +124,14 @@ export function Shop() {
     </RectButton>
   );
 
+  if (loadingProducts || loadingCategories) {
+    return (
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <ShopSkeleton />
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { backgroundColor: colors.background }]}>
@@ -153,30 +164,22 @@ export function Shop() {
         />
       </View>
 
-      {!products ? (
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <ActivityIndicator size="large" color={colors.primary} />
-        </View>
-      ) : (
-        <FlatList
-          data={filteredProducts}
-          renderItem={renderProductItem}
-          keyExtractor={(item) => item._id}
-          numColumns={2}
-          columnWrapperStyle={styles.columnWrapper}
-          contentContainerStyle={styles.productList}
-          showsVerticalScrollIndicator={false}
-          ListEmptyComponent={
-            <View style={{ alignItems: "center", marginTop: 50 }}>
-              <Text style={{ color: colors.textSecondary }}>
-                Aucun produit trouvé
-              </Text>
-            </View>
-          }
-        />
-      )}
+      <FlatList
+        data={filteredProducts}
+        renderItem={renderProductItem}
+        keyExtractor={(item) => item._id}
+        numColumns={2}
+        columnWrapperStyle={styles.columnWrapper}
+        contentContainerStyle={styles.productList}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <View style={{ alignItems: "center", marginTop: 50 }}>
+            <Text style={{ color: colors.textSecondary }}>
+              Aucun produit trouvé
+            </Text>
+          </View>
+        }
+      />
     </View>
   );
 }
