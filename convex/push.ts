@@ -11,8 +11,7 @@ export const recordPushToken = mutation({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
-      // You can decide if you want to throw or just return if not authenticated
-      // For now, only authenticated users can receive notifications in this logic
+      // For now, only authenticated users can receive notifications
       return;
     }
     await pushNotifications.recordToken(ctx, {

@@ -102,7 +102,7 @@ async function registerForPushNotificationsAsync() {
         })
       ).data;
 
-      console.log("Push notification token:", token);
+      // console.log("Push notification token:", token);
     } catch (e) {
       console.error("Error getting token", e);
     }
