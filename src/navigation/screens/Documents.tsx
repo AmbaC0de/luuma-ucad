@@ -14,7 +14,12 @@ import {
 import { RectButton } from "react-native-gesture-handler";
 import { useAppQuery } from "@src/hooks/useAppQuery";
 import { api } from "@convex/_generated/api";
-import { getDocumentTypeLabel, getIconColor } from "@src/models/documents";
+import {
+  DocumentItem,
+  getDocumentTypeLabel,
+  getIconColor,
+  LocalDocument,
+} from "@src/models/documents";
 import { formatBytes, formatDate } from "@src/utils/format";
 import { DocumentsSkeleton } from "@src/components/skeletons/DocumentsSkeleton";
 import { useAppDispatch, useAppSelector } from "@src/store/hooks";
@@ -23,19 +28,8 @@ import {
   removeDownloadedDocument,
   selectDownloadedDocuments,
 } from "@src/store/slices/documents";
-
-interface Document {
-  id: string;
-  title: string;
-  type: "Cours" | "TD" | "TP" | "Examen";
-  ue: string;
-  size: string;
-  date: string;
-  isDownloaded: boolean;
-  fileUrl: string;
-  rawSize?: number | null;
-  rawDate: number;
-}
+import { DocumentCard } from "@src/components/DocumentCard";
+import { DocumentDisplay } from "@src/models/documents";
 
 const FILTERS = ["Tout", "Cours", "TD", "TP", "Examen"] as const;
 
@@ -53,7 +47,7 @@ export function Documents() {
     api.documents.get,
   );
 
-  const handleDownload = async (item: Document) => {
+  const handleDownload = async (item: DocumentDisplay) => {
     // Si déjà téléchargé, suppression
     if (item.isDownloaded) {
       try {
@@ -85,18 +79,20 @@ export function Documents() {
       );
 
       if (outputDirInfo.exists) {
-        dispatch(
-          addDownloadedDocument({
-            id: item.id,
-            title: item.title,
-            type: item.type,
-            ue: item.ue,
-            size: item.rawSize,
-            date: item.rawDate,
-            remoteUrl: item.fileUrl,
-            localUri: outputDirInfo.uri,
-          }),
-        );
+        // On récupère le document original de la BD pour avoir toutes les propriétés
+        const originalDoc = documentsQuery?.find((d) => d._id === item.id);
+        if (originalDoc) {
+          const { _id, _creationTime, ...docFields } = originalDoc;
+          dispatch(
+            addDownloadedDocument({
+              ...docFields,
+              id: item.id,
+              localUri: outputDirInfo.uri,
+              date: Date.now(),
+              ue: item.ue,
+            }),
+          );
+        }
       }
     } catch (e) {
       console.error(e);
@@ -110,22 +106,30 @@ export function Documents() {
     }
   };
 
-  const documents: Document[] = useMemo(() => {
-    const combinedDocs = new Map<string, Document>();
+  const documents: DocumentDisplay[] = useMemo(() => {
+    const combinedDocs = new Map<string, DocumentDisplay>();
 
     // 1. Documents téléchargés (Offline)
     Object.values(downloadedDocs).forEach((doc) => {
+      const {
+        type,
+        size: docSize,
+        date: docDate,
+        ue,
+        localUri,
+        ...docFields
+      } = doc;
       combinedDocs.set(doc.id, {
+        ...docFields,
         id: doc.id,
-        title: doc.title,
-        type: doc.type as any,
-        ue: doc.ue,
-        size: formatBytes(doc.size),
-        date: formatDate(doc.date),
+        type: getDocumentTypeLabel(type),
+        ue,
+        size: formatBytes(docSize),
+        date: formatDate(docDate),
         isDownloaded: true,
-        fileUrl: doc.localUri,
-        rawSize: doc.size,
-        rawDate: doc.date,
+        fileUrl: localUri,
+        rawSize: docSize,
+        rawDate: docDate,
       });
     });
 
@@ -134,19 +138,27 @@ export function Documents() {
       documentsQuery.forEach((doc) => {
         const isDownloaded = !!downloadedDocs[doc._id];
         const existingDoc = combinedDocs.get(doc._id);
+        const {
+          _id,
+          _creationTime,
+          type,
+          description,
+          size: docSize,
+          ...docFields
+        } = doc;
 
         combinedDocs.set(doc._id, {
+          ...docFields,
           id: doc._id,
-          title: doc.title,
-          type: getDocumentTypeLabel(doc.type),
-          ue: doc.description || "N/A",
-          size: formatBytes(doc.size),
-          date: formatDate(doc._creationTime),
+          type: getDocumentTypeLabel(type),
+          ue: description || "N/A",
+          size: formatBytes(docSize),
+          date: formatDate(_creationTime),
           isDownloaded: isDownloaded,
           fileUrl:
             isDownloaded && existingDoc ? existingDoc.fileUrl : doc.fileUrl,
-          rawSize: doc.size,
-          rawDate: doc._creationTime,
+          rawSize: docSize,
+          rawDate: _creationTime,
         });
       });
     }
@@ -172,12 +184,10 @@ export function Documents() {
     );
   }
 
-  const renderItem = ({ item }: { item: Document }) => (
-    <RectButton
-      style={[
-        styles.docCard,
-        { backgroundColor: colors.card, borderColor: colors.border },
-      ]}
+  const renderItem = ({ item }: { item: DocumentDisplay }) => (
+    <DocumentCard
+      document={item}
+      isDownloading={downloadingIds.has(item.id)}
       onPress={() => {
         if (item.fileUrl) {
           navigation.navigate("PDFViewer", {
@@ -186,59 +196,8 @@ export function Documents() {
           });
         }
       }}
-    >
-      <View
-        style={[
-          styles.iconContainer,
-          { backgroundColor: getIconColor(item.type, colors.text) + "20" },
-        ]}
-      >
-        <Ionicons
-          name="document-text"
-          size={28}
-          color={getIconColor(item.type, colors.text)}
-        />
-      </View>
-
-      <View style={styles.docInfo}>
-        <Text
-          style={[styles.docTitle, { color: colors.text }]}
-          numberOfLines={1}
-        >
-          {item.title}
-        </Text>
-        <View style={styles.metaRow}>
-          <Text style={[styles.docMeta, { color: colors.textSecondary }]}>
-            {item.ue} • {item.type}
-          </Text>
-          <Text style={[styles.docMeta, { color: colors.textSecondary }]}>
-            {item.size} • {item.date}
-          </Text>
-        </View>
-      </View>
-
-      <IconButton
-        onPress={() => {
-          if (!item.isDownloaded) {
-            handleDownload(item);
-          }
-        }}
-      >
-        {downloadingIds.has(item.id) ? (
-          <ActivityIndicator size="small" color={colors.primary} />
-        ) : (
-          <Ionicons
-            name={
-              item.isDownloaded
-                ? "checkmark-circle-outline"
-                : "cloud-download-outline"
-            }
-            size={24}
-            color={item.isDownloaded ? colors.primary : colors.textSecondary}
-          />
-        )}
-      </IconButton>
-    </RectButton>
+      onDownload={() => handleDownload(item)}
+    />
   );
 
   return (
@@ -361,26 +320,6 @@ const styles = StyleSheet.create({
   listContent: {
     padding: 16,
     paddingTop: 8,
-  },
-  docCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 12,
-    marginBottom: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-  },
-  iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
-  },
-  docInfo: {
-    flex: 1,
-    marginRight: 8,
   },
   docTitle: {
     fontSize: 16,

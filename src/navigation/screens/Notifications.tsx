@@ -76,7 +76,7 @@ export function Notifications() {
         ]}
       >
         <Ionicons
-          name={getIcon(item.type) as any}
+          name={getIcon(item.type)}
           size={24}
           color={getIconColor(item.type)}
         />

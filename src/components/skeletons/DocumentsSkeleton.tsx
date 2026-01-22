@@ -18,14 +18,12 @@ const DocumentItemSkeleton = () => {
       </View>
 
       <View style={styles.docInfo}>
-        <SkeletonItem width="70%" height={16} style={{ marginBottom: 8 }} />
-        <View style={styles.metaRow}>
-          <SkeletonItem width="40%" height={12} />
-          <SkeletonItem width="30%" height={12} />
-        </View>
+        <SkeletonItem width="70%" height={12} style={{ marginBottom: 8 }} />
+        <SkeletonItem width="40%" height={8} style={{ marginBottom: 6 }} />
+        <SkeletonItem width="30%" height={8} />
       </View>
 
-      <SkeletonItem width={24} height={24} borderRadius={12} />
+      <SkeletonItem width={26} height={26} borderRadius={13} />
     </View>
   );
 };
@@ -49,8 +47,8 @@ export const DocumentsSkeleton = () => {
 
         <View style={styles.filterList}>
           <SkeletonItem
-            width={60}
-            height={32}
+            width={70}
+            height={35}
             borderRadius={20}
             style={{ marginRight: 8 }}
           />
@@ -61,7 +59,7 @@ export const DocumentsSkeleton = () => {
             style={{ marginRight: 8 }}
           />
           <SkeletonItem
-            width={50}
+            width={60}
             height={32}
             borderRadius={20}
             style={{ marginRight: 8 }}
@@ -113,7 +111,8 @@ const styles = StyleSheet.create({
   docCard: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 20,
     marginBottom: 12,
     borderRadius: 12,
     borderWidth: 1,

@@ -1,20 +1,20 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DocumentItem } from "@src/models/documents";
+import { DocumentItem, LocalDocument } from "@src/models/documents";
 
-export interface DownloadedDocument {
-  id: string;
-  title: string;
-  type: string;
-  ue: string;
-  size?: number | null;
-  date: number; // timestamp
-  remoteUrl: string;
-  localUri: string;
-  mimeType?: string;
-}
+// export interface DownloadedDocument {
+//   id: string;
+//   title: string;
+//   type: string;
+//   ue: string;
+//   size?: number | null;
+//   date: number; // timestamp
+//   remoteUrl: string;
+//   localUri: string;
+//   mimeType?: string;
+// }
 
 interface DocumentsState {
-  downloaded: Record<string, DownloadedDocument>;
+  downloaded: Record<string, LocalDocument>;
 }
 
 const initialState: DocumentsState = {
@@ -25,7 +25,7 @@ const documentsSlice = createSlice({
   name: "documents",
   initialState,
   reducers: {
-    addDownloadedDocument(state, action: PayloadAction<DownloadedDocument>) {
+    addDownloadedDocument(state, action: PayloadAction<LocalDocument>) {
       state.downloaded[action.payload.id] = action.payload;
     },
     removeDownloadedDocument(state, action: PayloadAction<string>) {
@@ -34,7 +34,7 @@ const documentsSlice = createSlice({
     // Action optionnelle pour synchroniser si nécessaire, par exemple nettoyer les fichiers inexistants
     syncDownloadedDocuments(
       state,
-      action: PayloadAction<Record<string, DownloadedDocument>>,
+      action: PayloadAction<Record<string, LocalDocument>>,
     ) {
       state.downloaded = action.payload;
     },
