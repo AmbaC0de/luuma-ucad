@@ -14,9 +14,10 @@ import { getIconColor, DocumentDisplay } from "../models/documents";
 
 interface DocumentCardProps {
   document: DocumentDisplay;
-  isDownloading: boolean;
+  isDownloading?: boolean;
+  buttonIconDisabled?: boolean;
   onPress: () => void;
-  onDownload: () => void;
+  onDownload?: () => void;
   onDelete?: () => void;
   containerStyle?: ViewStyle;
 }
@@ -28,6 +29,7 @@ export const DocumentCard = ({
   onDownload,
   onDelete,
   containerStyle,
+  buttonIconDisabled,
 }: DocumentCardProps) => {
   const { title, ue, type, size, date, isDownloaded } = document;
   const { colors } = useTheme();
@@ -38,8 +40,9 @@ export const DocumentCard = ({
   // Déterminer l'icône à afficher
   const getActionIcon = () => {
     if (isDownloading) return null;
-    if (isDownloaded) return "checkmark-outline";
-    return onDelete ? "trash-outline" : "cloud-download-outline";
+    if (isDownloaded && onDelete) return "trash-outline";
+    if (isDownloaded) return "checkmark-circle-outline";
+    return "cloud-download-outline";
   };
 
   // Déterminer la couleur de l'icône
@@ -91,7 +94,7 @@ export const DocumentCard = ({
         </View>
       </View>
 
-      <IconButton onPress={handleActionPress}>
+      <IconButton onPress={handleActionPress} disabled={buttonIconDisabled}>
         {isDownloading ? (
           <ActivityIndicator size="small" color={colors.primary} />
         ) : (

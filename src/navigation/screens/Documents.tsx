@@ -40,6 +40,7 @@ export function Documents() {
     <DocumentCard
       document={item}
       isDownloading={isDownloading(item.id)}
+      buttonIconDisabled={isDownloading(item.id) || item.isDownloaded}
       onPress={() => {
         if (item.fileUrl) {
           navigation.navigate("PDFViewer", {

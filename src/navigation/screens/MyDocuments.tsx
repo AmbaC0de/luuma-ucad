@@ -16,7 +16,6 @@ export function MyDocuments() {
   const renderItem = ({ item }: { item: DocumentDisplay }) => (
     <DocumentCard
       document={item}
-      isDownloading={false}
       onPress={() => {
         if (item.fileUrl) {
           navigation.navigate("PDFViewer", {
@@ -25,7 +24,7 @@ export function MyDocuments() {
           });
         }
       }}
-      onDownload={() => deleteDocument(item)}
+      onDelete={() => deleteDocument(item)}
     />
   );
 
