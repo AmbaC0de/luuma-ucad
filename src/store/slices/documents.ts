@@ -1,17 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DocumentItem, LocalDocument } from "@src/models/documents";
-
-// export interface DownloadedDocument {
-//   id: string;
-//   title: string;
-//   type: string;
-//   ue: string;
-//   size?: number | null;
-//   date: number; // timestamp
-//   remoteUrl: string;
-//   localUri: string;
-//   mimeType?: string;
-// }
+import { LocalDocument } from "@src/models/documents";
 
 interface DocumentsState {
   downloaded: Record<string, LocalDocument>;

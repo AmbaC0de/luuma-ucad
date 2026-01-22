@@ -17,6 +17,7 @@ import { Shop } from "./screens/Shop";
 import { NewsDetail } from "./screens/NewsDetail";
 import { ProductDetail } from "./screens/ProductDetail";
 import { PDFViewer } from "./screens/PDFViewer";
+import { MyDocuments } from "./screens/MyDocuments";
 import IconButton from "@src/components/ui/IconButton";
 
 const HomeTabs = createBottomTabNavigator({
@@ -151,6 +152,12 @@ const RootStack = createNativeStackNavigator({
         title: "",
         // headerBackTitle: "Retour",
       }),
+    },
+    MyDocuments: {
+      screen: MyDocuments,
+      options: {
+        title: "Mes documents",
+      },
     },
   },
 });

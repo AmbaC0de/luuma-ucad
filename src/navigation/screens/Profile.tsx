@@ -1,6 +1,6 @@
 import { useAuthActions } from "@convex-dev/auth/react";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "@react-navigation/native";
+import { useTheme, useNavigation } from "@react-navigation/native";
 import { InfoRow } from "@src/components/InfoRow";
 import OptionItem from "@src/components/OptionItem";
 import IconButton from "@src/components/ui/IconButton";
@@ -20,6 +20,7 @@ import { RectButton } from "react-native-gesture-handler";
 
 export function Profile() {
   const { colors } = useTheme();
+  const navigation = useNavigation();
   const { signOut } = useAuthActions();
   const { isAuthenticated } = useConvexAuth();
   const { data: user, isFetching } = useAppQuery(
@@ -33,7 +34,11 @@ export function Profile() {
     isDestructive?: boolean;
     onPress?: () => void;
   }[] = [
-    { label: "Mes documents", icon: "folder-open-outline" },
+    {
+      label: "Mes documents",
+      icon: "folder-open-outline",
+      onPress: () => navigation.navigate("MyDocuments"),
+    },
     { label: "Notifications", icon: "notifications-outline" },
     { label: "Sécurité", icon: "shield-checkmark-outline" },
     { label: "Aide & Support", icon: "help-circle-outline" },
@@ -90,7 +95,11 @@ export function Profile() {
           { backgroundColor: colors.card, borderColor: colors.border },
         ]}
       >
-        {/* <InfoRow label="Niveau" value={user?.level} icon="school-outline" /> */}
+        <InfoRow
+          label="Niveau"
+          value={user?.level ?? "N/A"}
+          icon="school-outline"
+        />
         <View style={[styles.divider, { backgroundColor: colors.border }]} />
         <InfoRow
           label="Faculté"
