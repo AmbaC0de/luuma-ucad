@@ -17,7 +17,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "sn.luumaucad.client"
+      "package": "sn.luumaucad.client",
+      "googleServicesFile": "./keys/google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,7 +33,14 @@
         }
       ],
       "expo-secure-store",
-      "expo-web-browser"
-    ]
+      "expo-web-browser",
+      "expo-notifications"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "13f81676-34fa-488a-a230-3a4d39f5e41f"
+      }
+    },
+    "owner": "luuma_ucad"
   }
 }

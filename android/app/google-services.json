@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "523481974096",
+    "project_id": "luuma-170a8",
+    "storage_bucket": "luuma-170a8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:523481974096:android:1bb1f063c9ac0586321855",
+        "android_client_info": {
+          "package_name": "sn.luumaucad.client"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPnZ_DWl7bCXIvkESYb_qAzyf1DPVK_Lk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

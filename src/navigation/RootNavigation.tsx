@@ -12,6 +12,7 @@ import { SheetProvider, SheetManager } from "react-native-actions-sheet";
 import Sheets from "@src/components/bottom-sheets/sheets";
 import { useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
+import { usePushNotifications } from "@src/hooks/usePushNotifications";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -39,6 +40,8 @@ const ProfileCheck = () => {
 const RootNavigation = () => {
   const { appTheme } = useThemeManager();
   const { isLoading } = useConvexAuth();
+
+  usePushNotifications();
 
   useEffect(() => {
     if (!isLoading) {
