@@ -33,15 +33,16 @@ export function Profile() {
     icon: string;
     isDestructive?: boolean;
     onPress?: () => void;
+    disabled?: boolean; // we disable some options for now
   }[] = [
     {
       label: "Mes documents",
       icon: "folder-open-outline",
       onPress: () => navigation.navigate("MyDocuments"),
     },
-    { label: "Notifications", icon: "notifications-outline" },
-    { label: "Sécurité", icon: "shield-checkmark-outline" },
-    { label: "Aide & Support", icon: "help-circle-outline" },
+    { label: "Notifications", icon: "notifications-outline", disabled: true },
+    { label: "Sécurité", icon: "shield-checkmark-outline", disabled: true },
+    { label: "Aide & Support", icon: "help-circle-outline", disabled: true },
     {
       label: "Se déconnecter",
       icon: "log-out-outline",
@@ -126,9 +127,11 @@ export function Profile() {
         Paramètres
       </Text>
       <View style={styles.optionsContainer}>
-        {options.map((option, index) => (
-          <OptionItem {...option} key={index} />
-        ))}
+        {options
+          .filter((option) => !option.disabled)
+          .map((option, index) => (
+            <OptionItem {...option} key={index} />
+          ))}
       </View>
     </ScrollView>
   );

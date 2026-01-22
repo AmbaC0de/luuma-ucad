@@ -33,7 +33,8 @@ const styles = StyleSheet.create({
   infoRow: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
   },
   iconBox: {
     width: 40,
