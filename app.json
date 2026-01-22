@@ -10,7 +10,7 @@
     "scheme": "luumaucadclient",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.luumaucad.client"
+      "bundleIdentifier": "sn.luumaucad.client"
     },
     "android": {
       "adaptiveIcon": {
