@@ -13,9 +13,11 @@
       "bundleIdentifier": "sn.luumaucad.client"
     },
     "android": {
+      "icon": "./assets/luuma_android_main.png",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/luuma_android_adaptive_white.png",
+        "monochromeImage": "./assets/luuma_android_adaptive.png",
+        "backgroundColor": "#c2410c"
       },
       "package": "sn.luumaucad.client",
       "googleServicesFile": "./keys/google-services.json"
