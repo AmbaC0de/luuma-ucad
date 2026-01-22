@@ -9,11 +9,13 @@ import { rememberEnhancer, rememberReducer } from "redux-remember";
 import { rtkApi } from "./apiService";
 import themeReducer from "./slices/theme";
 import documentsReducer from "./slices/documents";
+import notificationsReducer from "./slices/notifications";
 
 const reducers = {
   [rtkApi.reducerPath]: rtkApi.reducer,
   theme: themeReducer,
   documents: documentsReducer,
+  notifications: notificationsReducer,
 };
 
 const rememberedKeys = [
@@ -21,6 +23,7 @@ const rememberedKeys = [
   ...secureKeys,
   rtkApi.reducerPath,
   "documents",
+  "notifications",
 ];
 const rememberedReducer = rememberReducer(reducers);
 

@@ -5,6 +5,8 @@ import Constants from "expo-constants";
 import { Platform } from "react-native";
 import { useMutation, useConvexAuth } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import { useAppDispatch } from "../store/hooks";
+import { addNotification } from "../store/slices/notifications";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -19,10 +21,8 @@ export function usePushNotifications() {
   const [expoPushToken, setExpoPushToken] = useState<string | undefined>(
     undefined,
   );
-  const [notification, setNotification] = useState<
-    Notifications.Notification | undefined
-  >(undefined);
 
+  const dispatch = useAppDispatch();
   const { isAuthenticated } = useConvexAuth();
   const recordPushToken = useMutation(api.push.recordPushToken);
 
@@ -35,7 +35,21 @@ export function usePushNotifications() {
 
     const notificationListener = Notifications.addNotificationReceivedListener(
       (notification) => {
-        setNotification(notification);
+        // Map Expo Notification to our NotificationItem
+        const { date, request } = notification;
+        const { content, identifier } = request;
+
+        dispatch(
+          addNotification({
+            id: identifier,
+            title: content.title || "Notification",
+            message: content.body || "",
+            date: date,
+            type: (content.data?.type as any) || "info",
+            read: false,
+            data: content.data,
+          }),
+        );
       },
     );
 
@@ -60,7 +74,6 @@ export function usePushNotifications() {
 
   return {
     expoPushToken,
-    notification,
   };
 }
 

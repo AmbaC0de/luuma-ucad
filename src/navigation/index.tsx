@@ -10,7 +10,7 @@ import { View } from "react-native";
 import { Home } from "./screens/Home";
 import { Profile } from "./screens/Profile";
 import { Settings } from "./screens/Settings";
-import { Updates } from "./screens/Updates";
+import { Notifications } from "./screens/Notifications";
 import { NotFound } from "./screens/NotFound";
 import { Documents } from "./screens/Documents";
 import { Shop } from "./screens/Shop";
@@ -102,7 +102,7 @@ const RootStack = createNativeStackNavigator({
       },
     },
     Updates: {
-      screen: Updates,
+      screen: Notifications,
       options: {
         title: "Notifications",
       },

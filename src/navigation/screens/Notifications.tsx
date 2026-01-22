@@ -3,62 +3,31 @@ import { useTheme } from "@react-navigation/native";
 import React from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
+import { useAppDispatch, useAppSelector } from "@src/store/hooks";
+import {
+  markAsRead,
+  NotificationItem,
+  selectNotifications,
+} from "@src/store/slices/notifications";
 
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  date: string;
-  type: "info" | "alert" | "success";
-  read: boolean;
-}
+const getRelativeTime = (timestamp: number) => {
+  const now = Date.now();
+  const diff = now - timestamp;
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
 
-const NOTIFICATIONS: Notification[] = [
-  {
-    id: "1",
-    title: "Changement de salle",
-    message:
-      "Le cours de MATH101 aura lieu en salle A203 au lieu de l'amphi B.",
-    date: "Il y a 10 min",
-    type: "info",
-    read: false,
-  },
-  {
-    id: "2",
-    title: "Résultats disponibles",
-    message: "Les notes du partiel de Physique sont publiées.",
-    date: "Il y a 2h",
-    type: "success",
-    read: false,
-  },
-  {
-    id: "3",
-    title: "Urgent : Date limite bourses",
-    message: "N'oubliez pas de renouveler votre dossier avant ce soir minuit.",
-    date: "Hier",
-    type: "alert",
-    read: true,
-  },
-  {
-    id: "4",
-    title: "Conférence annulée",
-    message: "La conférence sur l'IA est reportée à une date ultérieure.",
-    date: "Hier",
-    type: "info",
-    read: true,
-  },
-  {
-    id: "5",
-    title: "Nouvelle ressource ajoutée",
-    message: "Le support de cours pour le chapitre 3 est en ligne.",
-    date: "2 jours",
-    type: "info",
-    read: true,
-  },
-];
+  if (minutes < 1) return "À l'instant";
+  if (minutes < 60) return `Il y a ${minutes} min`;
+  if (hours < 24) return `Il y a ${hours} h`;
+  if (days < 7) return `Il y a ${days} j`;
+  return new Date(timestamp).toLocaleDateString("fr-FR");
+};
 
-export function Updates() {
+export function Notifications() {
   const { colors } = useTheme();
+  const dispatch = useAppDispatch();
+  const { items: notifications } = useAppSelector(selectNotifications);
 
   const getIcon = (type: string) => {
     switch (type) {
@@ -82,7 +51,13 @@ export function Updates() {
     }
   };
 
-  const renderItem = ({ item }: { item: Notification }) => (
+  const handlePress = (item: NotificationItem) => {
+    if (!item.read) {
+      dispatch(markAsRead(item.id));
+    }
+  };
+
+  const renderItem = ({ item }: { item: NotificationItem }) => (
     <RectButton
       style={[
         styles.notificationItem,
@@ -91,6 +66,8 @@ export function Updates() {
           borderColor: colors.border,
         },
       ]}
+      enabled={!item.read}
+      onPress={() => handlePress(item)}
     >
       <View
         style={[
@@ -115,7 +92,7 @@ export function Updates() {
             {item.title}
           </Text>
           <Text style={[styles.date, { color: colors.textSecondary }]}>
-            {item.date}
+            {getRelativeTime(item.date)}
           </Text>
         </View>
         <Text
@@ -134,7 +111,7 @@ export function Updates() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <FlatList
-        data={NOTIFICATIONS}
+        data={notifications}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
