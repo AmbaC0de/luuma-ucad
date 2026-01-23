@@ -6,7 +6,8 @@
     "start": "expo start --dev-client",
     "web": "expo start --web",
     "android": "expo run:android",
-    "android:release": "cd android && gradlew app:bundleRelease",
+    "android:build": "cd android && gradlew app:bundleRelease",
+    "android:release": "expo run:android --variant release",
     "ios": "expo run:ios"
   },
   "dependencies": {

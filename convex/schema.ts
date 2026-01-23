@@ -75,11 +75,20 @@ export default defineSchema({
     createdAt: v.optional(v.number()),
   }),
 
+  sellers: defineTable({
+    fullName: v.string(),
+    image: v.optional(v.string()),
+    storageId: v.optional(v.id("_storage")),
+    phoneNumber: v.string(),
+    createdAt: v.number(),
+  }),
+
   products: defineTable({
     name: v.string(),
     description: v.optional(v.string()),
     price: v.number(),
     category: v.id("productCategories"),
+    sellerId: v.optional(v.id("sellers")),
     images: v.optional(v.array(v.string())),
     storageIds: v.optional(v.array(v.id("_storage"))),
     createdBy: v.optional(v.id("users")),

@@ -1,5 +1,10 @@
+import { Doc } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+
+type ProductWithSeller = Doc<"products"> & {
+  seller?: Doc<"sellers"> | null;
+};
 
 export const get = query({
   args: {},

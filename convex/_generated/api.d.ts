@@ -18,6 +18,7 @@ import type * as news from "../news.js";
 import type * as productCategories from "../productCategories.js";
 import type * as products from "../products.js";
 import type * as push from "../push.js";
+import type * as sellers from "../sellers.js";
 import type * as sponsors from "../sponsors.js";
 import type * as users from "../users.js";
 
@@ -38,6 +39,7 @@ declare const fullApi: ApiFromModules<{
   productCategories: typeof productCategories;
   products: typeof products;
   push: typeof push;
+  sellers: typeof sellers;
   sponsors: typeof sponsors;
   users: typeof users;
 }>;
