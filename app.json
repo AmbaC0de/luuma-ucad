@@ -30,8 +30,12 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#ffffff",
-          "image": "./assets/splash-icon.png"
+          "backgroundColor": "#fff8f5",
+          "image": "./assets/luuma-splash-icon-light.png",
+          "dark": {
+            "image": "./assets/luuma-splash-icon-dark.png",
+            "backgroundColor": "#130d0a"
+          }
         }
       ],
       "expo-secure-store",

@@ -12,13 +12,14 @@ import { StaticScreenProps } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import Text from "@src/components/ui/Text";
 import IconButton from "@src/components/ui/IconButton";
+import Button from "@src/components/ui/Button";
 
-type Props = StaticScreenProps<{
+type PdfViewerProps = StaticScreenProps<{
   url: string;
   title?: string;
 }>;
 
-export const PDFViewer = ({ route }: Props) => {
+export const PDFViewer = ({ route }: PdfViewerProps) => {
   const { url, title } = route.params;
   const navigation = useNavigation();
   const { colors } = useTheme();
@@ -38,10 +39,10 @@ export const PDFViewer = ({ route }: Props) => {
       {error ? (
         <View style={styles.centerContainer}>
           <Text style={{ color: colors.error, marginBottom: 10 }}>{error}</Text>
-          <IconButton onPress={() => setError(null)}>
+          <Button variant="outlined" onPress={() => setError(null)}>
             <Ionicons name="refresh" size={24} color={colors.text} />
             <Text style={{ marginLeft: 8 }}>Réessayer</Text>
-          </IconButton>
+          </Button>
         </View>
       ) : (
         <Pdf

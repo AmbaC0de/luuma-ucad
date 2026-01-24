@@ -83,12 +83,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   outlined: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-    paddingVertical: 16,
-    borderRadius: 16,
     borderWidth: 1,
   },
 });
