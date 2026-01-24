@@ -7,8 +7,12 @@ import { ConvexReactClient } from "convex/react";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { Platform } from "react-native";
 import secureStorage from "./storage-driver/secureStoreDriver";
+import { CONVEX_DEPLOY_URL, CONVEX_DEV_URL } from "./config/env";
 
-const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
+const convexDeploymentUrl =
+  process.env.NODE_ENV === "development" ? CONVEX_DEV_URL! : CONVEX_DEPLOY_URL!;
+
+const convex = new ConvexReactClient(convexDeploymentUrl, {
   unsavedChangesWarning: false,
 });
 
