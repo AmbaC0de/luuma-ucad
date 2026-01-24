@@ -2,14 +2,23 @@ import { Doc } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
-type ProductWithSeller = Doc<"products"> & {
+export type ProductWithSeller = Doc<"products"> & {
   seller?: Doc<"sellers"> | null;
 };
 
 export const get = query({
   args: {},
-  handler: async (ctx) => {
-    return await ctx.db.query("products").order("desc").collect();
+  handler: async (ctx): Promise<ProductWithSeller[]> => {
+    const products = await ctx.db.query("products").order("desc").collect();
+
+    return Promise.all(
+      products.map(async (product) => {
+        const seller = product.sellerId
+          ? await ctx.db.get(product.sellerId)
+          : null;
+        return { ...product, seller };
+      }),
+    );
   },
 });
 

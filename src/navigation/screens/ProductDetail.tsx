@@ -1,3 +1,4 @@
+import { ProductWithSeller } from "@convex/products";
 import { Ionicons } from "@expo/vector-icons";
 import {
   StaticScreenProps,
@@ -8,8 +9,10 @@ import Button from "@src/components/ui/Button";
 import IconButton from "@src/components/ui/IconButton";
 import React, { useState } from "react";
 import {
+  Alert,
   Dimensions,
   FlatList,
+  Linking,
   Image,
   ScrollView,
   StyleSheet,
@@ -21,29 +24,54 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
 
-type Props = StaticScreenProps<{
-  id: string;
-  name: string;
-  price: number;
-  category: string;
-  image: string;
-  rating: number;
-  description?: string;
-  images?: string[];
-}>;
+type Seller = {
+  _id: string;
+  fullName: string;
+  phoneNumber: string;
+  image?: string;
+};
+
+type Props = StaticScreenProps<
+  Omit<ProductWithSeller, "category" | "_id"> & {
+    id: string;
+    category: string;
+    rating: number;
+    image: string;
+  }
+>;
 
 export function ProductDetail({ route }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();
-  const { name, price, category, image, rating, description } = route.params;
+  const { name, price, category, image, rating, description, seller } =
+    route.params;
   const [quantity, setQuantity] = useState(1);
   const [activeIndex, setActiveIndex] = useState(0);
 
   // Fallback to multiple internal images for demo if only 1 is provided
   const images = route.params.images || [image, image, image];
 
-  const increment = () => setQuantity((q) => q + 1);
-  const decrement = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
+  const handleBuy = async () => {
+    if (!seller?.phoneNumber) {
+      Alert.alert("Info", "Aucun contact vendeur disponible pour ce produit.");
+      return;
+    }
+    const phoneNumber = seller.phoneNumber.replace(/\s/g, "");
+    const whatsappUrl = `whatsapp://send?phone=${phoneNumber}`;
+
+    try {
+      const supported = await Linking.canOpenURL(whatsappUrl);
+      if (supported) {
+        await Linking.openURL(whatsappUrl);
+      } else {
+        await Linking.openURL(`tel:${phoneNumber}`);
+      }
+    } catch (err) {
+      console.error("An error occurred", err);
+      // Fallback to phone call if checking support fails
+      await Linking.openURL(`tel:${phoneNumber}`);
+    }
+  };
 
   return (
     <SafeAreaView
@@ -146,14 +174,14 @@ export function ProductDetail({ route }: Props) {
           { backgroundColor: colors.card, borderColor: colors.border },
         ]}
       >
-        <Button style={{ width: "100%" }}>
+        <Button style={{ width: "100%" }} onPress={handleBuy}>
           <Ionicons
-            name="cart"
+            name="logo-whatsapp"
             size={20}
             color="#fff"
             style={{ marginRight: 8 }}
           />
-          <Text style={styles.addToCartText}>J'achète</Text>
+          <Text style={styles.addToCartText}>Contacter le vendeur</Text>
         </Button>
       </View>
     </SafeAreaView>

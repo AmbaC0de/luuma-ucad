@@ -15,6 +15,7 @@ import { Doc } from "../../../convex/_generated/dataModel";
 import { formatPrice } from "@src/utils/format";
 import { useAppQuery } from "@src/hooks/useAppQuery";
 import { ShopSkeleton } from "@src/components/skeletons/ShopSkeleton";
+import { ProductWithSeller } from "@convex/products";
 
 export function Shop() {
   const { colors } = useTheme();
@@ -78,7 +79,7 @@ export function Shop() {
     );
   };
 
-  const renderProductItem = ({ item }: { item: Doc<"products"> }) => (
+  const renderProductItem = ({ item }: { item: ProductWithSeller }) => (
     <RectButton
       style={[
         styles.productCard,
