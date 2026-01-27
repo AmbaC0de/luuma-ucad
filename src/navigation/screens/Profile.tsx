@@ -51,6 +51,33 @@ export function Profile() {
     },
   ];
 
+  const academicInfo = [
+    {
+      label: "Niveau",
+      value: user?.level ?? "N/A",
+      icon: "school-outline",
+    },
+    {
+      label: "Faculté",
+      value: user?.faculty?.code ?? "N/A",
+      icon: "business-outline",
+    },
+    {
+      label: "Département",
+      value: user?.department?.code ?? "N/A",
+      icon: "library-outline",
+    },
+    ...(user?.institute?.code
+      ? [
+          {
+            label: "Institut",
+            value: user.institute.code,
+            icon: "business-outline",
+          },
+        ]
+      : []),
+  ];
+
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: colors.background }]}
@@ -96,31 +123,16 @@ export function Profile() {
           { backgroundColor: colors.card, borderColor: colors.border },
         ]}
       >
-        <InfoRow
-          label="Niveau"
-          value={user?.level ?? "N/A"}
-          icon="school-outline"
-        />
-        <View style={[styles.divider, { backgroundColor: colors.border }]} />
-        <InfoRow
-          label="Faculté"
-          value={user?.faculty?.code ?? "N/A"}
-          icon="business-outline"
-        />
-        <View style={[styles.divider, { backgroundColor: colors.border }]} />
-        <InfoRow
-          label="Département"
-          value={user?.department?.code ?? "N/A"}
-          icon="library-outline"
-        />
-        <View style={[styles.divider, { backgroundColor: colors.border }]} />
-        {user?.institute?.code && (
-          <InfoRow
-            label="Institut"
-            value={user.institute.code}
-            icon="business-outline"
-          />
-        )}
+        {academicInfo.map((item, index) => (
+          <React.Fragment key={index}>
+            <InfoRow label={item.label} value={item.value} icon={item.icon} />
+            {index < academicInfo.length - 1 && (
+              <View
+                style={[styles.divider, { backgroundColor: colors.border }]}
+              />
+            )}
+          </React.Fragment>
+        ))}
       </View>
 
       <Text style={[styles.sectionHeader, { color: colors.text }]}>

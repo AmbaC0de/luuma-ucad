@@ -13,6 +13,7 @@ import { useMutation } from "convex/react";
 import { Id } from "@convex/_generated/dataModel";
 import { Ionicons } from "@expo/vector-icons";
 import { RectButton } from "react-native-gesture-handler";
+import BottomActionSheet from "./BottomActionSheet";
 
 const ProfileCompletionSheet = (
   props: SheetProps<"profile-completion-sheet">,
@@ -166,20 +167,13 @@ const ProfileCompletionSheet = (
   };
 
   return (
-    <ActionSheet
+    <BottomActionSheet
       id={props.sheetId}
-      gestureEnabled={false}
+      defaultOverlayOpacity={0.8}
       closable={false}
-      containerStyle={{
-        paddingBottom: 40,
-        paddingHorizontal: 20,
-        paddingTop: 20,
-        backgroundColor: colors.card,
-        borderTopLeftRadius: 24,
-        borderTopRightRadius: 24,
-      }}
+      gestureEnabled={false}
     >
-      <View>
+      <View style={{ marginTop: 20 }}>
         <Text style={[styles.title, { color: colors.text }]}>
           Complétez votre profil
         </Text>
@@ -318,7 +312,7 @@ const ProfileCompletionSheet = (
           </Text>
         </Button>
       </View>
-    </ActionSheet>
+    </BottomActionSheet>
   );
 };
 

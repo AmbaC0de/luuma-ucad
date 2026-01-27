@@ -26,10 +26,13 @@ const ProfileCheck = () => {
     if (user === undefined) return;
 
     // If user is logged in (user != null) and missing info
-    if (user && (!user.matricule || !user.facultyId)) {
+    if (user && (!user.matricule || !user.facultyId || !user.level)) {
       // Delay slightly to ensure navigation is ready or sheet provider is ready
       setTimeout(() => {
-        SheetManager.show("profile-completion-sheet");
+        const sheet = SheetManager.get("profile-completion-sheet");
+        if (!sheet) {
+          SheetManager.show("profile-completion-sheet");
+        }
       }, 500);
     }
   }, [user]);

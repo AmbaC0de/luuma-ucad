@@ -1,16 +1,16 @@
 import { useTheme } from "@react-navigation/native";
 import React, { PropsWithChildren } from "react";
 import { StyleSheet, View } from "react-native";
-import ActionSheet from "react-native-actions-sheet";
+import ActionSheet, { ActionSheetProps } from "react-native-actions-sheet";
 
-type BottomActionSheetProps = PropsWithChildren<{ id: string }>;
+type BottomActionSheetProps = PropsWithChildren & ActionSheetProps;
 
-const BottomActionSheet = ({ children, id }: BottomActionSheetProps) => {
+const BottomActionSheet = (props: BottomActionSheetProps) => {
   const { colors } = useTheme();
 
   return (
     <ActionSheet
-      id={id}
+      id={props?.id}
       gestureEnabled
       containerStyle={[
         { backgroundColor: colors.card },
@@ -22,8 +22,9 @@ const BottomActionSheet = ({ children, id }: BottomActionSheetProps) => {
         marginTop: 20,
       }}
       keyboardHandlerEnabled={true}
+      {...props}
     >
-      <View style={styles.container}>{children}</View>
+      <View style={styles.container}>{props.children}</View>
     </ActionSheet>
   );
 };
