@@ -22,12 +22,63 @@ export const get = query({
   },
 });
 
+export const getBySellerId = query({
+  args: { sellerId: v.id("sellers") },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("products")
+      .withIndex("by_sellerId", (q) => q.eq("sellerId", args.sellerId))
+      .collect();
+  },
+});
+
+export const remove = mutation({
+  args: { id: v.id("products") },
+  handler: async (ctx, args) => {
+    // Optionally check authorization
+    await ctx.db.delete(args.id);
+  },
+});
+
+export const update = mutation({
+  args: {
+    id: v.id("products"),
+    name: v.optional(v.string()),
+    description: v.optional(v.string()),
+    price: v.optional(v.number()),
+    category: v.optional(v.id("productCategories")),
+    storageIds: v.optional(v.array(v.id("_storage"))),
+  },
+  handler: async (ctx, args) => {
+    const { id, storageIds, ...rest } = args;
+    const images: string[] = [];
+
+    if (storageIds) {
+      for (const storageId of storageIds) {
+        const url = await ctx.storage.getUrl(storageId);
+        if (url) {
+          images.push(url);
+        }
+      }
+    }
+
+    // If storageIds is provided, we update images field too
+    const updateFields = {
+      ...rest,
+      ...(storageIds ? { storageIds, images } : {}),
+    };
+
+    await ctx.db.patch(id, updateFields);
+  },
+});
+
 export const create = mutation({
   args: {
     name: v.string(),
     description: v.optional(v.string()),
     price: v.number(),
     category: v.id("productCategories"),
+    sellerId: v.optional(v.id("sellers")),
     storageIds: v.optional(v.array(v.id("_storage"))),
   },
   handler: async (ctx, args) => {

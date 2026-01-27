@@ -1,6 +1,11 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { PushNotifications } from "@convex-dev/expo-push-notifications";
+import { components } from "./_generated/api";
+import { Doc } from "./_generated/dataModel";
+
+const pushNotifications = new PushNotifications(components.pushNotifications);
 
 export const get = query({
   args: {},
@@ -70,6 +75,40 @@ export const create = mutation({
       // createdBy: userIdentity.subject,
       createdAt: Date.now(),
     });
+
+    const userId = await getAuthUserId(ctx);
+    let targetUsers: Doc<"users">[] = [];
+
+    if (args.scope === "DEPARTMENT" && args.departmentId) {
+      targetUsers = await ctx.db
+        .query("users")
+        .withIndex("by_departmentId", (q) =>
+          q.eq("departmentId", args.departmentId!),
+        )
+        .collect();
+    } else if (args.scope === "FACULTY" && args.facultyId) {
+      targetUsers = await ctx.db
+        .query("users")
+        .withIndex("by_facultyId", (q) => q.eq("facultyId", args.facultyId!))
+        .collect();
+    } else if (args.scope === "UNIVERSITY") {
+      targetUsers = await ctx.db.query("users").collect();
+    }
+
+    await Promise.all(
+      targetUsers.map(async (user) => {
+        if (userId && user._id === userId) return;
+
+        await pushNotifications.sendPushNotification(ctx, {
+          userId: user._id,
+          notification: {
+            title: "Nouveau document disponible",
+            body: args.title,
+            data: { documentId: documentId },
+          },
+        });
+      }),
+    );
 
     return documentId;
   },

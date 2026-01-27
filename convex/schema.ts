@@ -20,7 +20,10 @@ export default defineSchema({
     phone: v.optional(v.string()),
     emailVerificationTime: v.optional(v.float64()),
     level: v.optional(v.string()),
-  }).index("email", ["email"]),
+  })
+    .index("email", ["email"])
+    .index("by_facultyId", ["facultyId"])
+    .index("by_departmentId", ["departmentId"]),
 
   faculties: defineTable({
     name: v.string(),
@@ -93,7 +96,9 @@ export default defineSchema({
     storageIds: v.optional(v.array(v.id("_storage"))),
     createdBy: v.optional(v.id("users")),
     createdAt: v.number(),
-  }).index("by_category", ["category"]),
+  })
+    .index("by_category", ["category"])
+    .index("by_sellerId", ["sellerId"]),
 
   documents: defineTable({
     title: v.string(),
