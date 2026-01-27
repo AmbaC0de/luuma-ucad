@@ -47,6 +47,9 @@
         "projectId": "13f81676-34fa-488a-a230-3a4d39f5e41f"
       }
     },
-    "owner": "luuma_ucad"
+    "owner": "luuma_ucad",
+    "experiments": {
+      "reactCompiler": true
+    }
   }
 }

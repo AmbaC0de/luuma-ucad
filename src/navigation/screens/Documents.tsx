@@ -17,7 +17,11 @@ export function Documents() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("Tout");
 
-  const { documents, documentsQuery, loadingDocuments } = useDocumentsData();
+  const {
+    documents = [],
+    documentsQuery,
+    loadingDocuments,
+  } = useDocumentsData();
   const { handleAction, isDownloading } = useDocumentActions(documentsQuery);
 
   const filteredDocs = documents.filter((doc) => {
