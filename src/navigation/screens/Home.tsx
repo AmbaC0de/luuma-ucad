@@ -8,10 +8,12 @@ import { useAppQuery } from "@src/hooks/useAppQuery";
 import { api } from "@convex/_generated/api";
 import { getScopeColor, getScopeLabel, NewsItem } from "@src/models/news";
 import { HomeSkeleton } from "@src/components/skeletons/HomeSkeleton";
+import { usePushNotifications } from "@src/hooks/usePushNotifications";
 
 export function Home() {
   const { colors } = useTheme();
   const navigation = useNavigation();
+  usePushNotifications(); // Initialize push notifications
   const { data: news, isFetching: loadingNews } = useAppQuery(
     api.news.listNews,
   );

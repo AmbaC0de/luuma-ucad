@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingTop: 16,
-    paddingBottom: 40, // More bottom padding if using pure View, SafeAreaView handles visual
+    paddingBottom: 30,
     borderTopWidth: 1,
     gap: 16,
   },

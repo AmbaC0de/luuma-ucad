@@ -27,11 +27,13 @@ export function usePushNotifications() {
   const recordPushToken = useMutation(api.push.recordPushToken);
 
   useEffect(() => {
-    registerForPushNotificationsAsync()
-      .then((token) => {
-        setExpoPushToken(token);
-      })
-      .catch((error: any) => setExpoPushToken(`${error}`));
+    const timeoutId = setTimeout(() => {
+      registerForPushNotificationsAsync()
+        .then((token) => {
+          setExpoPushToken(token);
+        })
+        .catch((error: any) => setExpoPushToken(`${error}`));
+    }, 10000);
 
     const notificationListener = Notifications.addNotificationReceivedListener(
       (notification) => {
@@ -59,6 +61,7 @@ export function usePushNotifications() {
       });
 
     return () => {
+      clearTimeout(timeoutId);
       notificationListener.remove();
       responseListener.remove();
     };

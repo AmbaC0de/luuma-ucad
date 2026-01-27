@@ -41,8 +41,6 @@ const RootNavigation = () => {
   const { appTheme } = useThemeManager();
   const { isLoading } = useConvexAuth();
 
-  usePushNotifications();
-
   useEffect(() => {
     if (!isLoading) {
       SplashScreen.hideAsync();
