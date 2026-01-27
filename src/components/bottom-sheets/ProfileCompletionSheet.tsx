@@ -22,6 +22,7 @@ const ProfileCompletionSheet = (
   const updateProfile = useMutation(api.users.update);
 
   const [matricule, setMatricule] = useState("");
+  const [level, setLevel] = useState<string | null>(null);
   const [selectedFaculty, setSelectedFaculty] = useState<{
     id: Id<"faculties">;
     label: string;
@@ -51,6 +52,29 @@ const ProfileCompletionSheet = (
     setSelectedDepartment(null);
     setSelectedInstitute(null);
   }, [selectedFaculty]);
+
+  const openLevelSelection = () => {
+    SheetManager.show("selection-sheet", {
+      payload: {
+        title: "Choisir votre niveau",
+        items: [
+          "Licence 1",
+          "Licence 2",
+          "Licence 3",
+          "Master 1",
+          "Master 2",
+        ].map((l) => ({
+          id: l,
+          label: l,
+          value: l,
+        })),
+        onSelect: (item) => {
+          setLevel(item.value as string);
+        },
+        showSearch: false,
+      },
+    });
+  };
 
   const openFacultySelection = () => {
     if (!faculties) return;
@@ -123,6 +147,10 @@ const ProfileCompletionSheet = (
       Alert.alert("Erreur", "Veuillez renseigner votre matricule");
       return;
     }
+    if (!level) {
+      Alert.alert("Erreur", "Veuillez sélectionner votre niveau");
+      return;
+    }
     if (!selectedFaculty) {
       Alert.alert("Erreur", "Veuillez sélectionner votre faculté");
       return;
@@ -153,6 +181,7 @@ const ProfileCompletionSheet = (
     try {
       await updateProfile({
         matricule,
+        level,
         facultyId: selectedFaculty.id,
         departmentId: selectedDepartment?.id,
         instituteId: selectedInstitute?.id,
@@ -192,11 +221,38 @@ const ProfileCompletionSheet = (
                 backgroundColor: colors.background,
               },
             ]}
-            placeholder="Ex: 2021..."
+            placeholder="Ex: 20260127AB"
             placeholderTextColor={colors.text + "80"}
             value={matricule}
             onChangeText={setMatricule}
           />
+        </View>
+
+        <View style={styles.formGroup}>
+          <Text style={[styles.label, { color: colors.text }]}>Niveau</Text>
+          <RectButton
+            style={[
+              styles.selector,
+              {
+                borderColor: colors.border,
+                backgroundColor: colors.background,
+              },
+            ]}
+            onPress={openLevelSelection}
+          >
+            <Text
+              style={{
+                color: level ? colors.text : colors.text + "80",
+              }}
+            >
+              {level ?? "Sélectionner votre niveau"}
+            </Text>
+            <Ionicons
+              name="chevron-down"
+              size={20}
+              color={colors.textSecondary}
+            />
+          </RectButton>
         </View>
 
         <View style={styles.formGroup}>
@@ -229,7 +285,7 @@ const ProfileCompletionSheet = (
         </View>
 
         {selectedFaculty && (hasDepartments || hasInstitutes) && (
-          <View style={styles.groupContainer}>
+          <View>
             {hasDepartments && (
               <View style={styles.formGroup}>
                 <Text style={[styles.label, { color: colors.text }]}>
@@ -337,21 +393,18 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 12,
     padding: 12,
-    height: 48,
+    height: 55,
   },
   selector: {
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 12,
     padding: 12,
-    height: 48,
+    height: 55,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-  },
-  groupContainer: {
-    // gap: 16
   },
 });
 

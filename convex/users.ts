@@ -19,9 +19,7 @@ export const currentUser = query({
       return null;
     }
 
-    const faculty = user.facultyId
-      ? await ctx.db.get(user.facultyId)
-      : null;
+    const faculty = user.facultyId ? await ctx.db.get(user.facultyId) : null;
 
     const department = user.departmentId
       ? await ctx.db.get(user.departmentId)
@@ -43,6 +41,7 @@ export const currentUser = query({
 export const update = mutation({
   args: {
     matricule: v.optional(v.string()),
+    level: v.optional(v.string()),
     facultyId: v.optional(v.id("faculties")),
     departmentId: v.optional(v.id("departments")),
     instituteId: v.optional(v.id("institutes")),

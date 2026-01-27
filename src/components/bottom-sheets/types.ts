@@ -13,5 +13,6 @@ export interface SelectionSheetProps {
     title: string;
     items: SelectionItem[];
     onSelect: (item: SelectionItem) => void;
+    showSearch?: boolean;
   };
 }

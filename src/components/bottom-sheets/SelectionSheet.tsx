@@ -35,18 +35,22 @@ const SelectionSheet = (props: SheetProps<"selection-sheet">) => {
         </Text>
       </View>
 
-      <View style={[styles.searchContainer, { backgroundColor: colors.card }]}>
-        <TextInput
-          style={[
-            styles.searchInput,
-            { color: colors.text, borderColor: colors.border },
-          ]}
-          placeholder="Rechercher..."
-          placeholderTextColor={colors.text + "80"}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-      </View>
+      {props.payload?.showSearch && (
+        <View
+          style={[styles.searchContainer, { backgroundColor: colors.card }]}
+        >
+          <TextInput
+            style={[
+              styles.searchInput,
+              { color: colors.text, borderColor: colors.border },
+            ]}
+            placeholder="Rechercher..."
+            placeholderTextColor={colors.text + "80"}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
+      )}
 
       <FlatList
         data={filteredItems}
