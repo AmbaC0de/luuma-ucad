@@ -70,6 +70,12 @@ export const postNews = mutation({
       targetUsers.map(async (user) => {
         if (user._id === userIdentity.subject) return;
 
+        const userStatus = await pushNotifications.getStatusForUser(ctx, {
+          userId: user._id,
+        });
+
+        if (!userStatus.hasToken) return;
+
         await pushNotifications.sendPushNotification(ctx, {
           userId: user._id,
           notification: {

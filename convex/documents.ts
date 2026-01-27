@@ -99,6 +99,12 @@ export const create = mutation({
       targetUsers.map(async (user) => {
         if (userId && user._id === userId) return;
 
+        const userStatus = await pushNotifications.getStatusForUser(ctx, {
+          userId: user._id,
+        });
+
+        if (!userStatus.hasToken) return;
+
         await pushNotifications.sendPushNotification(ctx, {
           userId: user._id,
           notification: {
