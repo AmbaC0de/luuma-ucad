@@ -32,14 +32,6 @@ export function Documents() {
     return matchesFilter && matchesSearch;
   });
 
-  if (loadingDocuments) {
-    return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <DocumentsSkeleton />
-      </View>
-    );
-  }
-
   const renderItem = ({ item }: { item: DocumentDisplay }) => (
     <DocumentCard
       document={item}
@@ -111,26 +103,30 @@ export function Documents() {
         />
       </View>
 
-      <FlatList
-        data={filteredDocs}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Ionicons
-              name="library-outline"
-              size={64}
-              color={colors.textSecondary}
-              style={{ opacity: 0.5, marginBottom: 16 }}
-            />
-            <Text style={{ color: colors.textSecondary }}>
-              Aucun document trouvé
-            </Text>
-          </View>
-        }
-      />
+      {loadingDocuments ? (
+        <DocumentsSkeleton />
+      ) : (
+        <FlatList
+          data={filteredDocs}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Ionicons
+                name="library-outline"
+                size={64}
+                color={colors.textSecondary}
+                style={{ opacity: 0.5, marginBottom: 16 }}
+              />
+              <Text style={{ color: colors.textSecondary }}>
+                Aucun document trouvé
+              </Text>
+            </View>
+          }
+        />
+      )}
     </View>
   );
 }

@@ -29,53 +29,13 @@ const DocumentItemSkeleton = () => {
 };
 
 export const DocumentsSkeleton = () => {
-  const { colors } = useTheme();
-
   return (
     <View style={styles.container}>
-      {/* Header Skeleton */}
-      <View style={styles.header}>
-        <View
-          style={[
-            styles.searchContainer,
-            { backgroundColor: colors.card, borderColor: colors.border },
-          ]}
-        >
-          <SkeletonItem width={20} height={20} style={{ marginRight: 8 }} />
-          <SkeletonItem width="60%" height={16} />
-        </View>
-
-        <View style={styles.filterList}>
-          <SkeletonItem
-            width={70}
-            height={35}
-            borderRadius={20}
-            style={{ marginRight: 8 }}
-          />
-          <SkeletonItem
-            width={80}
-            height={32}
-            borderRadius={20}
-            style={{ marginRight: 8 }}
-          />
-          <SkeletonItem
-            width={60}
-            height={32}
-            borderRadius={20}
-            style={{ marginRight: 8 }}
-          />
-          <SkeletonItem width={70} height={32} borderRadius={20} />
-        </View>
-      </View>
-
       {/* List items */}
       <View style={styles.listContent}>
-        <DocumentItemSkeleton />
-        <DocumentItemSkeleton />
-        <DocumentItemSkeleton />
-        <DocumentItemSkeleton />
-        <DocumentItemSkeleton />
-        <DocumentItemSkeleton />
+        {Array.from({ length: 3 }).map((_, index) => (
+          <DocumentItemSkeleton key={index} />
+        ))}
       </View>
     </View>
   );
