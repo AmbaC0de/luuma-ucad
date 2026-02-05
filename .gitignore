@@ -17,6 +17,7 @@ expo-env.d.ts
 *.key
 *.mobileprovision
 *.keystore
+android/
 
 # Metro
 .metro-health-check*
@@ -42,4 +43,3 @@ app-example
 keys/
 google-services.json
 GoogleService-Info.plist
-android/
