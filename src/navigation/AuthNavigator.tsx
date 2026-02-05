@@ -13,14 +13,34 @@ export const AuthNavigator = () => {
 
   return (
     <NavigationContainer theme={appTheme}>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        <Stack.Screen name="Welcome" component={Welcome} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="SignUp" component={SignUp} />
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Welcome"
+          component={Welcome}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Login"
+          component={Login}
+          options={({ theme }) => ({
+            headerTitle: "",
+            headerStyle: {
+              backgroundColor: theme.colors.background,
+            },
+            headerShadowVisible: false,
+          })}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUp}
+          options={({ theme }) => ({
+            headerTitle: "",
+            headerStyle: {
+              backgroundColor: theme.colors.background,
+            },
+            headerShadowVisible: false,
+          })}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

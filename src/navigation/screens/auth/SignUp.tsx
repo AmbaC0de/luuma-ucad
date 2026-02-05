@@ -7,11 +7,14 @@ import { useForm } from "react-hook-form";
 import Text from "@src/components/ui/Text";
 import Button from "@src/components/ui/Button";
 import FormTextInput from "@src/components/form/FormTextInput";
+import Animated from "react-native-reanimated";
+import { useKeyboardPadding } from "@src/hooks/useKeyboardPadding";
 
 export const SignUp = ({ navigation }: any) => {
   const { signIn } = useAuthActions();
   const { colors } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
+  const { animatedStyle } = useKeyboardPadding();
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -37,9 +40,7 @@ export const SignUp = ({ navigation }: any) => {
   };
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
-    >
+    <View style={[styles.container]}>
       <View style={styles.content}>
         <Text style={[styles.title, { color: colors.text }]}>
           Créer un compte
@@ -89,7 +90,8 @@ export const SignUp = ({ navigation }: any) => {
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+      <Animated.View style={animatedStyle} />
+    </View>
   );
 };
 
@@ -97,7 +99,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    padding: 20,
+    paddingHorizontal: 20,
+    marginTop: -50,
   },
   content: {
     alignItems: "center",
