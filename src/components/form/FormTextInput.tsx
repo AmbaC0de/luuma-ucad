@@ -7,7 +7,16 @@ import {
   Path,
   RegisterOptions,
 } from "react-hook-form";
-import { StyleSheet, Text, TextInput, TextStyle, View } from "react-native";
+import {
+  KeyboardTypeOptions,
+  StyleSheet,
+  Text,
+  TextInput,
+  TextStyle,
+  View,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import IconButton from "../ui/IconButton";
 
 type FormTextInputProps<T extends FieldValues> = {
   control: Control<T>;
@@ -20,6 +29,9 @@ type FormTextInputProps<T extends FieldValues> = {
   >;
   multiline?: boolean;
   numberOfLines?: number;
+  keyboardType?: KeyboardTypeOptions;
+  secureTextEntry?: boolean;
+  startIcon?: keyof typeof Ionicons.glyphMap;
 };
 
 const FormTextInput = <T extends FieldValues>({
@@ -30,8 +42,13 @@ const FormTextInput = <T extends FieldValues>({
   rules,
   multiline = false,
   numberOfLines,
+  keyboardType = "default",
+  secureTextEntry = false,
+  startIcon,
 }: FormTextInputProps<T>) => {
   const { colors } = useTheme();
+  const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
+
   return (
     <Controller
       control={control}
@@ -41,25 +58,54 @@ const FormTextInput = <T extends FieldValues>({
         field: { onChange, onBlur, value },
         fieldState: { error },
       }) => (
-        <View style={styles.inputContainer}>
-          <TextInput
-            onChangeText={onChange}
-            onBlur={onBlur}
-            value={value}
-            placeholder={placeholder}
-            placeholderTextColor={colors.textSecondary}
-            multiline={multiline}
-            numberOfLines={numberOfLines}
+        <View>
+          <View
             style={[
-              styles.input,
+              styles.inputContainer,
               {
                 borderColor: error ? colors.error : colors.border,
-                color: colors.text,
               },
-              style,
             ]}
-            cursorColor={colors.text}
-          />
+          >
+            {startIcon && (
+              <Ionicons
+                name={startIcon}
+                size={20}
+                color={colors.textSecondary}
+              />
+            )}
+
+            <TextInput
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
+              placeholder={placeholder}
+              placeholderTextColor={colors.textSecondary}
+              multiline={multiline}
+              keyboardType={keyboardType}
+              numberOfLines={numberOfLines}
+              secureTextEntry={secureTextEntry && !isPasswordVisible}
+              style={[
+                styles.input,
+                {
+                  color: colors.text,
+                },
+                style,
+              ]}
+              cursorColor={colors.text}
+            />
+            {secureTextEntry && (
+              <IconButton
+                onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+              >
+                <Ionicons
+                  name={isPasswordVisible ? "eye-off-outline" : "eye-outline"}
+                  size={20}
+                  color={colors.textSecondary}
+                />
+              </IconButton>
+            )}
+          </View>
           {error && (
             <Text style={{ color: colors.error, marginTop: 4, marginLeft: 4 }}>
               {error.message}
@@ -74,13 +120,17 @@ const FormTextInput = <T extends FieldValues>({
 const styles = StyleSheet.create({
   inputContainer: {
     width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 10,
+    borderWidth: 1,
+    paddingHorizontal: 12,
   },
   input: {
-    borderWidth: 1,
-    width: "100%",
-    borderRadius: 10,
-    paddingHorizontal: 15,
+    flex: 1,
+    paddingHorizontal: 12,
     paddingVertical: 12,
+    marginRight: 10,
     height: 55,
     fontSize: 16,
   },

@@ -31,6 +31,7 @@ export function usePushNotifications() {
       registerForPushNotificationsAsync()
         .then((token) => {
           setExpoPushToken(token);
+          console.log("Registered for push notifications with token:", token);
         })
         .catch((error: any) => setExpoPushToken(`${error}`));
     }, 10000);

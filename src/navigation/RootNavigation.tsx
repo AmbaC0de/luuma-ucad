@@ -13,6 +13,7 @@ import Sheets from "@src/components/bottom-sheets/sheets";
 import { useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
 import { usePushNotifications } from "@src/hooks/usePushNotifications";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -42,7 +43,9 @@ const ProfileCheck = () => {
 
 const RootNavigation = () => {
   const { appTheme } = useThemeManager();
-  const { isLoading } = useConvexAuth();
+  const { isLoading, isAuthenticated } = useConvexAuth();
+
+  console.log("is authenticated", isAuthenticated);
 
   useEffect(() => {
     if (!isLoading) {
@@ -52,25 +55,27 @@ const RootNavigation = () => {
 
   return (
     <ThemeProvider value={appTheme}>
-      <SafeAreaProvider>
-        <StatusBar style={appTheme.dark ? "light" : "dark"} />
-        <SheetProvider>
-          <Sheets />
-          <Authenticated>
-            <ProfileCheck />
-            <Navigation
-              theme={appTheme}
-              linking={{
-                enabled: "auto",
-                prefixes: [prefix],
-              }}
-            />
-          </Authenticated>
-          <Unauthenticated>
-            <SignIn />
-          </Unauthenticated>
-        </SheetProvider>
-      </SafeAreaProvider>
+      <KeyboardProvider>
+        <SafeAreaProvider>
+          <StatusBar style={appTheme.dark ? "light" : "dark"} />
+          <SheetProvider>
+            <Sheets />
+            <Authenticated>
+              <ProfileCheck />
+              <Navigation
+                theme={appTheme}
+                linking={{
+                  enabled: "auto",
+                  prefixes: [prefix],
+                }}
+              />
+            </Authenticated>
+            <Unauthenticated>
+              <SignIn />
+            </Unauthenticated>
+          </SheetProvider>
+        </SafeAreaProvider>
+      </KeyboardProvider>
     </ThemeProvider>
   );
 };

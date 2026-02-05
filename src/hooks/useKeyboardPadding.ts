@@ -1,30 +1,30 @@
-// import { useKeyboardHandler } from "react-native-keyboard-controller";
-// import { useSharedValue, useAnimatedStyle } from "react-native-reanimated";
+import { useKeyboardHandler } from "react-native-keyboard-controller";
+import { useSharedValue, useAnimatedStyle } from "react-native-reanimated";
 
-// type UseKeyboardPaddingOptions = {
-//   offset?: number;
-// };
+type UseKeyboardPaddingOptions = {
+  offset?: number;
+};
 
-// export const useKeyboardPadding = (options?: UseKeyboardPaddingOptions) => {
-//   const offset = options?.offset ?? 0;
-//   const height = useSharedValue(offset);
+export const useKeyboardPadding = (options?: UseKeyboardPaddingOptions) => {
+  const offset = options?.offset ?? 0;
+  const height = useSharedValue(offset);
 
-//   useKeyboardHandler(
-//     {
-//       onMove: (e) => {
-//         "worklet";
-//         height.value =
-//           e.height > 0 ? Math.max(e.height + offset, offset) : offset;
-//       },
-//     },
-//     [offset]
-//   );
+  useKeyboardHandler(
+    {
+      onMove: (e) => {
+        "worklet";
+        height.value =
+          e.height > 0 ? Math.max(e.height + offset, offset) : offset;
+      },
+    },
+    [offset],
+  );
 
-//   const animatedStyle = useAnimatedStyle(() => {
-//     return {
-//       height: height.value,
-//     };
-//   }, []);
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      height: height.value,
+    };
+  }, []);
 
-//   return { height, animatedStyle };
-// };
+  return { height, animatedStyle };
+};

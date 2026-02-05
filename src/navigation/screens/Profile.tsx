@@ -87,14 +87,15 @@ export function Profile() {
       <View style={styles.header}>
         <View style={[styles.avatarContainer, { borderColor: colors.card }]}>
           <Image source={{ uri: user?.image }} style={styles.avatar} />
-          <IconButton
+          {/* TODO: implemente this after */}
+          {/* <IconButton
             contientStyle={[
               styles.editBadge,
               { backgroundColor: colors.primary },
             ]}
           >
             <Ionicons name="pencil" size={14} color="#fff" />
-          </IconButton>
+          </IconButton> */}
         </View>
         <Text style={[styles.userName, { color: colors.text }]}>
           {user?.name}
