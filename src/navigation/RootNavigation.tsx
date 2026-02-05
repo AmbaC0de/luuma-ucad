@@ -7,13 +7,16 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Navigation } from ".";
 import { StatusBar } from "expo-status-bar";
 import { Authenticated, Unauthenticated, useConvexAuth } from "convex/react";
-import { SignIn } from "./screens/SignIn";
+import { Welcome } from "./screens/auth/Welcome";
 import { SheetProvider, SheetManager } from "react-native-actions-sheet";
 import Sheets from "@src/components/bottom-sheets/sheets";
 import { useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
 import { usePushNotifications } from "@src/hooks/usePushNotifications";
 import { KeyboardProvider } from "react-native-keyboard-controller";
+import { Login } from "./screens/auth/Login";
+import { SignUp } from "./screens/auth/SignUp";
+import { AuthNavigator } from "./AuthNavigator";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -71,7 +74,9 @@ const RootNavigation = () => {
               />
             </Authenticated>
             <Unauthenticated>
-              <SignIn />
+              <AuthNavigator />
+              {/* <Login />
+              <SignUp /> */}
             </Unauthenticated>
           </SheetProvider>
         </SafeAreaProvider>
