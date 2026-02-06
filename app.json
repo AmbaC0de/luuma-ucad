@@ -9,8 +9,13 @@
     "newArchEnabled": true,
     "scheme": "luumaucadclient",
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "sn.luumaucad.client"
+      "supportsTablet": false,
+      "bundleIdentifier": "sn.luumaucad.client",
+      "icon": {
+        "dark": "./assets/luuma_main_ios_dark.png",
+        "light": "./assets/luuma_main_ios_light.png",
+        "tinted": "./assets/luuma_main_ios_tinted.png"
+      }
     },
     "android": {
       "version": "1.0.2",
